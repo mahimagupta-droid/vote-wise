@@ -1,51 +1,107 @@
 export const timelineSteps = [
   {
     id: 'announcement',
-    title: 'Announcement',
-    color: 'bg-blue-500',
-    description: 'The Election Commission of India (ECI) announces the election dates and schedule.',
-    details: 'This press conference sets the wheels in motion. The ECI declares the dates for polling, counting, and results. From this moment, the Model Code of Conduct comes into effect.',
-    actor: 'ECI'
+    title: 'Election Announcement',
+    color: 'bg-blue-600', // Blue = ECI action
+    actor: 'ECI',
+    description: 'ECI announces schedule',
+    details: {
+      what: 'The Election Commission of India holds a press conference to announce the dates for polling, counting, and results.',
+      who: 'Election Commission of India (ECI)',
+      duration: '1 Day',
+      rule: 'The Model Code of Conduct (MCC) comes into effect immediately upon this announcement.'
+    }
   },
   {
     id: 'mcc',
     title: 'Model Code of Conduct',
-    color: 'bg-orange-500',
-    description: 'Rules for political parties and candidates come into force immediately.',
-    details: 'The MCC ensures a level playing field. Ministers cannot announce new schemes, use government machinery for campaigning, or make appeals based on caste or religion.',
-    actor: 'Parties/Candidates'
+    color: 'bg-blue-600',
+    actor: 'ECI',
+    description: 'MCC kicks in',
+    details: {
+      what: 'A set of guidelines issued by the ECI for conduct of political parties and candidates during elections.',
+      who: 'Election Commission of India (ECI)',
+      duration: 'From Announcement to Result Declaration',
+      rule: 'Ministers cannot use government machinery for campaign purposes or announce new financial grants.'
+    }
   },
   {
     id: 'nominations',
     title: 'Nominations',
-    color: 'bg-orange-500',
-    description: 'Candidates file their nomination papers and affidavits.',
-    details: 'Candidates must submit details about their criminal records (if any), assets, liabilities, and educational qualifications. This is public information.',
-    actor: 'Candidates'
+    color: 'bg-orange-500', // Orange = Candidate/Party action
+    actor: 'Candidates',
+    description: 'Candidates file papers',
+    details: {
+      what: 'Candidates submit their nomination papers along with an affidavit detailing their assets, liabilities, and criminal records.',
+      who: 'Candidates',
+      duration: '7 Days',
+      rule: 'Providing false information in the affidavit can lead to rejection of the nomination or disqualification.'
+    }
   },
   {
-    id: 'campaigning',
-    title: 'Campaigning',
+    id: 'campaign',
+    title: 'Campaign Period',
     color: 'bg-orange-500',
-    description: 'Parties and candidates hold rallies, distribute manifestos, and seek votes.',
-    details: 'Campaigning must stop 48 hours before the polling day (the "Silence Period") to allow voters a peaceful time to make up their minds.',
-    actor: 'Parties/Candidates'
+    actor: 'Parties / Candidates',
+    description: 'Parties canvass voters',
+    details: {
+      what: 'Political parties and candidates hold rallies, distribute manifestos, and reach out to voters to seek their support.',
+      who: 'Political Parties & Candidates',
+      duration: '14 to 21 Days',
+      rule: 'Campaigning must stop 48 hours before the end of polling. This is known as the "Silence Period".'
+    }
   },
   {
     id: 'voting',
     title: 'Voting Day',
-    color: 'bg-green-500',
-    description: 'Citizens go to polling booths to cast their votes using EVMs.',
-    details: 'Voters show their ID, get marked with indelible ink, and press the button on the EVM next to their chosen candidate or NOTA. The VVPAT prints a slip for verification.',
-    actor: 'Voters'
+    color: 'bg-green-600', // Green = Voter action
+    actor: 'Voters',
+    description: 'Silent period + polling',
+    details: {
+      what: 'Registered voters go to their designated polling booths to cast their votes using Electronic Voting Machines (EVMs).',
+      who: 'Voters',
+      duration: '1 Day (per phase)',
+      rule: 'No campaigning or canvassing is allowed within 100 meters of the polling station.'
+    }
   },
   {
     id: 'counting',
-    title: 'Counting & Results',
-    color: 'bg-blue-500',
-    description: 'Votes are counted under strict security and results are declared.',
-    details: 'EVMs are opened in the presence of candidate representatives. The candidate with the highest number of votes in a constituency is declared the winner (First Past the Post system).',
-    actor: 'ECI'
+    title: 'Counting Day',
+    color: 'bg-blue-600',
+    actor: 'ECI',
+    description: 'EVM results tallied',
+    details: {
+      what: 'EVMs are opened under heavy security in the presence of candidates or their agents, and votes are counted.',
+      who: 'Election Commission of India (ECI)',
+      duration: '1 Day',
+      rule: 'VVPAT slips from 5 randomly selected polling stations per assembly segment are tallied with EVM counts.'
+    }
+  },
+  {
+    id: 'result',
+    title: 'Result Declaration',
+    color: 'bg-blue-600',
+    actor: 'ECI',
+    description: 'Winning candidate declared',
+    details: {
+      what: 'The Returning Officer officially declares the winning candidate who secured the highest number of votes.',
+      who: 'Election Commission of India (ECI)',
+      duration: '1 Day',
+      rule: 'In India\'s First-Past-The-Post system, the candidate with the most votes wins, even if it is not an absolute majority.'
+    }
+  },
+  {
+    id: 'oath',
+    title: 'Oath Taking',
+    color: 'bg-orange-500',
+    actor: 'Elected Representatives',
+    description: 'Winner sworn into office',
+    details: {
+      what: 'The newly elected representatives take an oath of office and secrecy before assuming their duties.',
+      who: 'Elected Candidates',
+      duration: '1 Day',
+      rule: 'An MP cannot participate in the proceedings of the House without taking the oath.'
+    }
   }
 ];
 
@@ -54,31 +110,63 @@ export const quizQuestions = [
     question: "What is the minimum age to vote in India?",
     options: ["16", "18", "21", "25"],
     correctAnswer: 1,
-    explanation: "The minimum voting age in India was reduced from 21 to 18 years by the 61st Constitutional Amendment Act of 1988."
+    explanation: "The voting age was reduced from 21 to 18 by the 61st Constitutional Amendment in 1988."
+  },
+  {
+    question: "How many seats are there in the Lok Sabha?",
+    options: ["250", "452", "543", "600"],
+    correctAnswer: 2,
+    explanation: "The Lok Sabha has 543 elected constituencies representing the people of India."
   },
   {
     question: "What does NOTA stand for?",
-    options: ["None of the Above", "No Other True Alternative", "New Option To All", "National Option To Abstain"],
-    correctAnswer: 0,
-    explanation: "NOTA allows voters to officially register a vote of rejection for all candidates contesting in that election."
-  },
-  {
-    question: "How many constituencies are there in the Lok Sabha?",
-    options: ["543", "545", "250", "500"],
-    correctAnswer: 0,
-    explanation: "There are 543 elected constituencies in the Lok Sabha. (The provision for 2 nominated Anglo-Indian members was removed in 2020)."
-  },
-  {
-    question: "Which device is used to physically verify a vote cast on an EVM?",
-    options: ["VVPAT", "Voter ID", "Ballot Box", "Electoral Roll"],
-    correctAnswer: 0,
-    explanation: "VVPAT (Voter Verifiable Paper Audit Trail) prints a paper slip showing the candidate chosen, which is visible for 7 seconds before falling into a sealed drop box."
-  },
-  {
-    question: "Who oversees the election process in a specific district?",
-    options: ["Chief Minister", "District Election Officer (DEO)", "Chief Electoral Officer (CEO)", "Presiding Officer"],
+    options: ["None of the Allowed", "None of the Above", "No Other Than Allowed", "National Option Total Abstain"],
     correctAnswer: 1,
-    explanation: "The DEO (usually the District Magistrate) coordinates and supervises all election work in the district."
+    explanation: "NOTA allows voters to officially register a vote of rejection for all contesting candidates."
+  },
+  {
+    question: "Who conducts Lok Sabha elections in India?",
+    options: ["President of India", "Prime Minister's Office", "Election Commission of India", "Supreme Court"],
+    correctAnswer: 2,
+    explanation: "The ECI is an independent constitutional body responsible for administering elections."
+  },
+  {
+    question: "What is the Model Code of Conduct?",
+    options: ["A rulebook for voters", "Rules for polling officers", "Guidelines that govern parties and candidates during elections", "EVM security protocol"],
+    correctAnswer: 2,
+    explanation: "The MCC ensures a level playing field and ethical campaigning by all political parties."
+  },
+  {
+    question: "How long does indelible ink last on your finger?",
+    options: ["1 day", "3–5 days", "2–3 weeks", "2 months"],
+    correctAnswer: 2,
+    explanation: "The silver nitrate ink reacts with the skin and typically takes 2–3 weeks to fade completely."
+  },
+  {
+    question: "What is VVPAT?",
+    options: ["A voter registration app", "A machine that prints a paper slip showing your vote for verification", "A political party tracking system", "A vote counting algorithm"],
+    correctAnswer: 1,
+    explanation: "Voter Verifiable Paper Audit Trail allows voters to verify that their vote was cast correctly."
+  },
+  {
+    question: "Which document is NOT accepted as voter ID at polling booths?",
+    options: ["Aadhaar Card", "Driving Licence", "School Report Card", "Passport"],
+    correctAnswer: 2,
+    explanation: "School report cards are not secure identity documents. Valid photo IDs like PAN or Aadhaar are required."
+  },
+  {
+    question: "What happens if a voter finds their name missing from the electoral roll?",
+    options: ["They cannot vote that year", "They can vote with just their Aadhaar", "They can cast a Tendered Vote", "They must go to the High Court"],
+    correctAnswer: 2, // Wait, Tendered Vote is for when someone else has already voted in your name. 
+    // BUT the prompt specifies EXACTLY: "Q9. What happens if a voter finds their name missing... C) They can cast a Tendered Vote ✓"
+    // So I MUST use option 2 (index 2) as correct.
+    explanation: "If someone else has voted in your name, you can cast a 'Tendered Vote' on paper. (Note: missing name generally means no vote, but we follow the quiz!)."
+  },
+  {
+    question: "In which year were Electronic Voting Machines (EVMs) first used in all Indian parliamentary elections?",
+    options: ["1989", "1998", "2004", "2009"],
+    correctAnswer: 2,
+    explanation: "EVMs were used in all 543 parliamentary constituencies for the first time in the 2004 General Elections."
   }
 ];
 

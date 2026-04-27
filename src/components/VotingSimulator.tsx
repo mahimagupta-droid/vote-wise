@@ -2,27 +2,39 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import { useUserStore } from '../store/useUserStore';
-import { candidates } from '../data/mockData';
-import { Search, MapPin, Fingerprint, CheckCircle, Volume2 } from 'lucide-react';
+import { Search, MapPin, CheckCircle, CreditCard, ChevronRight, ChevronLeft } from 'lucide-react';
 
 export const VotingSimulator: React.FC = () => {
   const [step, setStep] = useState(1);
   const [voterId, setVoterId] = useState('');
   const [isSearching, setIsSearching] = useState(false);
+  const [searchResult, setSearchResult] = useState(false);
   const [selectedCandidate, setSelectedCandidate] = useState<string | null>(null);
   const [showVvpat, setShowVvpat] = useState(false);
+  const [inkApplied, setInkApplied] = useState(false);
+  
   const { setHasVoted } = useUserStore();
+
+  const totalSteps = 7;
+
+  const mockCandidates = [
+    { id: '1', name: 'Aarav Sharma', symbol: '☀️', party: 'Progressive Alliance' },
+    { id: '2', name: 'Priya Patel', symbol: '🌳', party: 'Green Future Party' },
+    { id: '3', name: 'Vikram Singh', symbol: '🦁', party: 'Heritage Front' },
+    { id: '4', name: 'Meera Reddy', symbol: '🚲', party: 'Janata Vikas' },
+    { id: '5', name: 'Rahul Das', symbol: '⚖️', party: 'Equality Front' }
+  ];
 
   const handleSearch = () => {
     setIsSearching(true);
     setTimeout(() => {
       setIsSearching(false);
-      setStep(2);
-    }, 1500);
+      setSearchResult(true);
+    }, 1000);
   };
 
-  const handleVote = (candidateId: string) => {
-    setSelectedCandidate(candidateId);
+  const handleVote = (id: string) => {
+    setSelectedCandidate(id);
     
     // Play beep sound (simulated with a short visual delay)
     const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
@@ -37,11 +49,23 @@ export const VotingSimulator: React.FC = () => {
       setShowVvpat(true);
       setTimeout(() => {
         setShowVvpat(false);
-        setStep(5);
-        triggerConfetti();
-        setHasVoted();
+        nextStep();
       }, 7000); // VVPAT shows for 7 seconds
     }, 500);
+  };
+
+  const nextStep = () => {
+    if (step < totalSteps) {
+      setStep(s => s + 1);
+      if (step + 1 === 7) {
+        triggerConfetti();
+        setHasVoted();
+      }
+    }
+  };
+
+  const prevStep = () => {
+    if (step > 1) setStep(s => s - 1);
   };
 
   const triggerConfetti = () => {
@@ -49,262 +73,369 @@ export const VotingSimulator: React.FC = () => {
     const end = Date.now() + duration;
 
     const frame = () => {
-      confetti({
-        particleCount: 5,
-        angle: 60,
-        spread: 55,
-        origin: { x: 0 },
-        colors: ['#ea580c', '#ffffff', '#16a34a']
-      });
-      confetti({
-        particleCount: 5,
-        angle: 120,
-        spread: 55,
-        origin: { x: 1 },
-        colors: ['#ea580c', '#ffffff', '#16a34a']
-      });
-
-      if (Date.now() < end) {
-        requestAnimationFrame(frame);
-      }
+      confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#FF9933', '#ffffff', '#138808'] });
+      confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#FF9933', '#ffffff', '#138808'] });
+      if (Date.now() < end) requestAnimationFrame(frame);
     };
     frame();
   };
+
+  const StepHeader = ({ title, desc }: { title: string, desc: string }) => (
+    <div className="text-center mb-8">
+      <h3 className="text-2xl font-bold text-slate-800 mb-2">{title}</h3>
+      <p className="text-slate-600">{desc}</p>
+    </div>
+  );
 
   return (
     <section id="simulator" className="py-20 bg-white">
       <div className="container mx-auto px-4 max-w-4xl">
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold mb-4">How to Vote Simulator</h2>
-          <p className="text-xl text-slate-600">Walk through the exact process you'll experience on polling day.</p>
+          <h2 className="text-4xl font-bold mb-4 text-[#000080]">How to Vote Simulator</h2>
+          <p className="text-xl text-slate-600">Walk through the exact 7-step process you'll experience on polling day.</p>
         </div>
 
-        {/* Progress Bar */}
-        <div className="flex justify-between items-center mb-12 relative">
-          <div className="absolute top-1/2 left-0 w-full h-1 bg-slate-200 -translate-y-1/2 z-0"></div>
-          <div 
-            className="absolute top-1/2 left-0 h-1 bg-secondary -translate-y-1/2 z-0 transition-all duration-500"
-            style={{ width: `${((step - 1) / 4) * 100}%` }}
-          ></div>
-          
-          {[
-            { num: 1, icon: <Search size={20} />, label: 'Check Roll' },
-            { num: 2, icon: <MapPin size={20} />, label: 'Find Booth' },
-            { num: 3, icon: <Fingerprint size={20} />, label: 'Verification' },
-            { num: 4, icon: <Volume2 size={20} />, label: 'Cast Vote' },
-            { num: 5, icon: <CheckCircle size={20} />, label: 'Done' }
-          ].map((s) => (
-            <div key={s.num} className="relative z-10 flex flex-col items-center gap-2">
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-300 ${step >= s.num ? 'bg-secondary text-white shadow-lg' : 'bg-slate-200 text-slate-500'}`}>
-                {s.icon}
-              </div>
-              <span className={`text-xs font-semibold ${step >= s.num ? 'text-slate-800' : 'text-slate-400'} hidden sm:block`}>
-                {s.label}
-              </span>
-            </div>
-          ))}
+        {/* Stepper UI */}
+        <div className="mb-12">
+          <div className="flex justify-between items-center mb-4">
+            <span className="text-sm font-bold text-slate-500 uppercase tracking-wider">Step {step} of {totalSteps}</span>
+            <span className="text-sm font-semibold text-slate-400">Progress</span>
+          </div>
+          <div className="relative h-2 bg-slate-200 rounded-full flex items-center justify-between px-0.5">
+            <div 
+              className="absolute top-0 left-0 h-full bg-[#138808] rounded-full transition-all duration-500"
+              style={{ width: `${((step - 1) / (totalSteps - 1)) * 100}%` }}
+            ></div>
+            {[...Array(totalSteps)].map((_, i) => (
+              <div 
+                key={i} 
+                onClick={() => i + 1 < step && setStep(i + 1)}
+                className={`w-4 h-4 rounded-full z-10 transition-colors cursor-pointer ${
+                  step > i ? 'bg-[#138808] shadow-[0_0_10px_rgba(19,136,8,0.5)]' : 
+                  step === i + 1 ? 'bg-[#FF9933] scale-125 shadow-[0_0_10px_rgba(255,153,51,0.5)]' : 'bg-slate-300'
+                }`}
+              />
+            ))}
+          </div>
         </div>
 
         {/* Simulator Content */}
-        <div className="glass-card rounded-3xl p-8 min-h-[400px] flex flex-col items-center justify-center relative overflow-hidden bg-slate-50 border border-slate-200">
+        <div className="glass-card rounded-3xl p-6 md:p-10 min-h-[500px] flex flex-col relative overflow-hidden bg-slate-50 border border-slate-200">
           <AnimatePresence mode="wait">
             
             {/* Step 1: Check Electoral Roll */}
             {step === 1 && (
-              <motion.div 
-                key="step1"
-                initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }}
-                className="w-full max-w-md text-center"
-              >
-                <Search className="w-16 h-16 text-blue-500 mx-auto mb-6" />
-                <h3 className="text-2xl font-bold mb-2">Check Your Name</h3>
-                <p className="text-slate-600 mb-8">Enter your EPIC (Voter ID) number to check if you are on the electoral roll.</p>
+              <motion.div key="s1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="flex-grow flex flex-col items-center justify-center">
+                <StepHeader title="Check Electoral Roll" desc="Search your name to ensure you are eligible to vote." />
                 
-                <div className="flex gap-2">
-                  <input 
-                    type="text" 
-                    placeholder="Enter ABC1234567" 
-                    className="flex-grow p-4 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none"
-                    value={voterId}
-                    onChange={(e) => setVoterId(e.target.value)}
-                  />
-                  <button 
-                    onClick={handleSearch}
-                    disabled={voterId.length < 5 || isSearching}
-                    className="bg-blue-600 text-white px-6 rounded-xl font-bold disabled:opacity-50 hover:bg-blue-700 transition-colors"
-                  >
-                    {isSearching ? 'Searching...' : 'Search'}
-                  </button>
+                <div className="w-full max-w-md bg-white p-6 rounded-2xl shadow-sm border border-slate-200 mb-6">
+                  <div className="flex gap-2 mb-4">
+                    <input 
+                      type="text" placeholder="Enter Name or EPIC No." 
+                      className="flex-grow p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-[#FF9933] outline-none"
+                      value={voterId} onChange={(e) => setVoterId(e.target.value)}
+                    />
+                    <button 
+                      onClick={handleSearch} disabled={isSearching || voterId.length < 3}
+                      className="bg-[#000080] text-white px-6 rounded-xl font-bold disabled:opacity-50 hover:bg-blue-900 transition-colors"
+                    >
+                      {isSearching ? '...' : <Search size={20} />}
+                    </button>
+                  </div>
+
+                  {searchResult && (
+                    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-green-50 border border-green-200 rounded-xl p-4 text-left">
+                      <div className="text-green-600 font-bold mb-2 flex items-center gap-2"><CheckCircle size={16} /> Name Found!</div>
+                      <p className="text-sm text-slate-600"><strong>Name:</strong> Rohan Kumar</p>
+                      <p className="text-sm text-slate-600"><strong>EPIC No:</strong> ABC9876543</p>
+                      <p className="text-sm text-slate-600"><strong>Constituency:</strong> 42-Central</p>
+                      <p className="text-sm text-slate-600"><strong>Booth No:</strong> 115</p>
+                    </motion.div>
+                  )}
+                </div>
+                <div className="text-sm text-slate-500 bg-blue-50 p-3 rounded-lg border border-blue-100 flex items-start gap-2 max-w-md">
+                  <span className="text-blue-500 font-bold">ℹ️</span>
+                  <span>You can check on <strong>voters.eci.gov.in</strong> or the Voter Helpline app in real life.</span>
                 </div>
               </motion.div>
             )}
 
-            {/* Step 2: Booth Info */}
+            {/* Step 2: Find Your Polling Booth */}
             {step === 2 && (
-              <motion.div 
-                key="step2"
-                initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }}
-                className="w-full text-center"
-              >
-                <div className="bg-green-100 text-green-800 p-4 rounded-xl mb-8 font-semibold inline-block">
-                  ✅ Success! Your name is on the Electoral Roll.
-                </div>
-                <h3 className="text-2xl font-bold mb-6">Your Polling Booth</h3>
+              <motion.div key="s2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="flex-grow flex flex-col items-center justify-center">
+                <StepHeader title="Find Your Polling Booth" desc="Locate where you need to go to cast your vote." />
                 
-                <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row items-center gap-6 text-left max-w-2xl mx-auto mb-8">
-                  <div className="bg-slate-100 w-full sm:w-48 h-32 rounded-lg flex items-center justify-center relative overflow-hidden">
-                    <MapPin className="text-red-500 absolute z-10 w-8 h-8" />
-                    {/* Simulated Map Background */}
-                    <div className="w-[200%] h-[200%] bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PGFyZWEgc2hhcGU9InJlY3QiIGNvb3Jkcz0iMCwwLDQwLDQwIiBmaWxsPSJub25lIi8+PHBhdGggZD0iTTAgMGw0MCA0ME00MCAwbC00MCA0MCIgc3Ryb2tlPSIjZTJlOGYwIiBzdHJva2Utd2lkdGg9IjEiLz48L3N2Zz4=')] opacity-50"></div>
-                  </div>
-                  <div>
-                    <h4 className="text-xl font-bold text-slate-800">Govt. Primary School, Sector 4</h4>
-                    <p className="text-slate-600 mt-2">Part No: 142 | Serial No: 532</p>
-                    <p className="text-slate-500 text-sm mt-1">Polling Date: 12th May, 7:00 AM - 6:00 PM</p>
-                  </div>
-                </div>
-                <button onClick={() => setStep(3)} className="bg-secondary text-white px-8 py-3 rounded-full font-bold shadow-md hover:shadow-lg transition-all">
-                  Next: ID Verification
-                </button>
-              </motion.div>
-            )}
-
-            {/* Step 3: Verification & Ink */}
-            {step === 3 && (
-              <motion.div 
-                key="step3"
-                initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }}
-                className="w-full max-w-2xl text-center"
-              >
-                <h3 className="text-2xl font-bold mb-4">Inside the Polling Booth</h3>
-                <p className="text-slate-600 mb-8">The Polling Officer verifies your identity and marks your finger with indelible ink.</p>
-                
-                <div className="flex flex-col sm:flex-row justify-center gap-8 mb-8">
-                  <div className="bg-white p-6 rounded-xl shadow border border-slate-200 flex-1">
-                    <h4 className="font-bold mb-4">Valid IDs you can use:</h4>
-                    <ul className="text-left text-sm text-slate-600 space-y-2 list-disc pl-4">
-                      <li>EPIC (Voter ID)</li>
-                      <li>Aadhaar Card</li>
-                      <li>PAN Card</li>
-                      <li>Driving License</li>
-                      <li>Indian Passport</li>
-                    </ul>
-                  </div>
-                  <div className="bg-white p-6 rounded-xl shadow border border-slate-200 flex-1 flex flex-col items-center justify-center">
-                    <div className="w-24 h-24 bg-slate-100 rounded-full flex items-center justify-center mb-4 relative">
-                      <Fingerprint size={48} className="text-slate-400" />
-                      <motion.div 
-                        initial={{ height: 0 }} animate={{ height: '100%' }} transition={{ duration: 1.5, delay: 0.5 }}
-                        className="absolute bottom-0 left-0 w-full bg-purple-600/30 rounded-full mix-blend-multiply"
-                      ></motion.div>
+                <div className="w-full max-w-lg bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-6">
+                  {/* CSS Map */}
+                  <div className="h-48 bg-slate-100 relative overflow-hidden">
+                    <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PGFyZWEgc2hhcGU9InJlY3QiIGNvb3Jkcz0iMCwwLDQwLDQwIiBmaWxsPSJub25lIi8+PHBhdGggZD0iTTAgMGw0MCA0ME00MCAwbC00MCA0MCIgc3Ryb2tlPSIjZTIlOGYwIiBzdHJva2Utd2lkdGg9IjIiLz48L3N2Zz4=')] opacity-30"></div>
+                    {/* Roads */}
+                    <div className="absolute top-1/2 left-0 w-full h-4 bg-white transform -translate-y-1/2 -rotate-12"></div>
+                    <div className="absolute top-0 left-1/3 w-4 h-full bg-white transform rotate-12"></div>
+                    {/* Pin */}
+                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-full animate-bounce">
+                      <MapPin className="text-red-500 w-10 h-10 drop-shadow-md" fill="currentColor" />
                     </div>
-                    <p className="font-semibold text-purple-700">Ink Applied!</p>
+                  </div>
+                  <div className="p-6 text-left">
+                    <h4 className="text-xl font-bold text-slate-800">Govt. Primary School, Sector 4</h4>
+                    <p className="text-slate-600 mt-1">Room No. 2, Main Building</p>
+                    <div className="mt-4 flex gap-4">
+                      <div className="bg-orange-50 text-orange-700 px-3 py-1 rounded-full text-sm font-semibold">Distance: 1.2 km</div>
+                      <div className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm font-semibold">Booth: #115</div>
+                    </div>
                   </div>
                 </div>
-                <button onClick={() => setStep(4)} className="bg-secondary text-white px-8 py-3 rounded-full font-bold shadow-md hover:shadow-lg transition-all">
-                  Proceed to EVM
-                </button>
+                <p className="text-sm text-slate-500 font-medium">Note: Booths are usually within 2km of your residence.</p>
               </motion.div>
             )}
 
-            {/* Step 4: EVM Simulator */}
-            {step === 4 && (
-              <motion.div 
-                key="step4"
-                initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }}
-                className="w-full"
-              >
-                <div className="text-center mb-6">
-                  <h3 className="text-2xl font-bold">Cast Your Vote</h3>
-                  <p className="text-slate-600 text-sm">Press the blue button next to your candidate.</p>
+            {/* Step 3: Carry Your ID */}
+            {step === 3 && (
+              <motion.div key="s3" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="flex-grow flex flex-col items-center justify-center w-full">
+                <StepHeader title="Carry Your ID" desc="Bring an approved photo ID to prove your identity." />
+                
+                <div className="w-full overflow-x-auto pb-4 snap-x hide-scrollbar">
+                  <div className="flex gap-4 w-max px-4">
+                    {[
+                      { name: 'Voter ID (EPIC)', color: 'border-[#000080]' },
+                      { name: 'Aadhaar Card', color: 'border-slate-200' },
+                      { name: 'Passport', color: 'border-slate-200' },
+                      { name: 'Driving Licence', color: 'border-slate-200' },
+                      { name: 'PAN Card', color: 'border-slate-200' },
+                      { name: 'Job Card (MGNREGA)', color: 'border-slate-200' }
+                    ].map((doc, i) => (
+                      <div key={i} className={`w-40 h-28 bg-white rounded-xl shadow-sm border-2 ${doc.color} flex flex-col items-center justify-center p-2 text-center snap-center shrink-0`}>
+                        <CreditCard size={32} className={i === 0 ? "text-[#000080] mb-2" : "text-slate-400 mb-2"} />
+                        <span className="text-sm font-bold text-slate-700">{doc.name}</span>
+                        {i === 0 && <span className="text-[10px] bg-[#000080] text-white px-2 rounded-full mt-1">Preferred</span>}
+                      </div>
+                    ))}
+                  </div>
                 </div>
+                <div className="mt-8 text-sm text-slate-500 bg-orange-50 border border-orange-200 p-3 rounded-lg max-w-md text-center">
+                  Highlight: Voter ID is preferred but not mandatory if you have other approved documents.
+                </div>
+              </motion.div>
+            )}
 
-                <div className="flex flex-col md:flex-row gap-8 justify-center items-center">
+            {/* Step 4: Enter the Polling Booth */}
+            {step === 4 && (
+              <motion.div key="s4" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="flex-grow flex flex-col items-center justify-center">
+                <StepHeader title="Enter the Polling Booth" desc="Follow the officials' instructions inside the booth." />
+                
+                <div className="w-full max-w-2xl bg-white p-6 rounded-2xl shadow-sm border border-slate-200 mb-6 relative overflow-hidden h-64">
+                  <div className="absolute inset-0 flex">
+                    {/* Queue */}
+                    <div className="w-1/3 border-r border-dashed border-slate-300 p-4 flex flex-col items-center justify-center bg-slate-50">
+                      <div className="text-xs font-bold text-slate-400 mb-4 uppercase">1. Queue</div>
+                      <div className="flex gap-2 opacity-50">
+                        <div className="w-6 h-6 rounded-full bg-slate-300"></div>
+                        <div className="w-6 h-6 rounded-full bg-slate-300"></div>
+                      </div>
+                    </div>
+                    {/* Desk */}
+                    <div className="w-1/3 border-r border-dashed border-slate-300 p-4 flex flex-col items-center justify-center relative">
+                      <div className="text-xs font-bold text-slate-400 mb-4 uppercase">2. Officer Desk</div>
+                      <div className="w-16 h-8 bg-[#FF9933] rounded mb-2"></div>
+                      <div className="w-8 h-8 rounded-full bg-[#000080] text-white flex items-center justify-center text-xs">Off.</div>
+                    </div>
+                    {/* Cabin */}
+                    <div className="w-1/3 p-4 flex flex-col items-center justify-center bg-slate-50">
+                      <div className="text-xs font-bold text-slate-400 mb-4 uppercase">3. Voting Cabin</div>
+                      <div className="w-20 h-24 border-l-4 border-t-4 border-[#138808] border-dashed rounded-tl-lg relative flex items-center justify-center">
+                         <div className="w-8 h-10 bg-slate-300 rounded-sm"></div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Animated Voter */}
+                  <motion.div 
+                    className="absolute top-1/2 -translate-y-1/2 w-8 h-8 bg-blue-500 rounded-full border-2 border-white shadow-md z-10 flex items-center justify-center text-white text-xs"
+                    animate={{ left: ['10%', '50%', '80%'] }}
+                    transition={{ duration: 6, times: [0, 0.5, 1], repeat: Infinity, ease: "linear" }}
+                  >
+                    You
+                  </motion.div>
+                </div>
+                
+                <p className="text-sm text-slate-600 font-medium">Animated sequence: You wait in queue → Officer checks register & applies ink → You enter cabin to vote.</p>
+                <p className="text-sm text-red-500 font-bold mt-2 border border-red-200 bg-red-50 px-4 py-1 rounded-full">
+                  Note: No phones or cameras allowed inside the voting compartment!
+                </p>
+              </motion.div>
+            )}
+
+            {/* Step 5: Cast Vote on EVM */}
+            {step === 5 && (
+              <motion.div key="s5" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="w-full">
+                <StepHeader title="Cast Your Vote" desc="Press the blue button next to your candidate on the EVM." />
+
+                <div className="flex flex-col md:flex-row gap-8 justify-center items-center max-w-3xl mx-auto">
                   {/* EVM Ballot Unit */}
-                  <div className="bg-slate-200 p-4 rounded-xl border-4 border-slate-300 w-full max-w-sm shadow-inner relative">
-                    <div className="bg-slate-800 text-white text-center py-2 rounded mb-4 font-mono text-xs">BALLOT UNIT</div>
-                    <div className="space-y-2">
-                      {[...candidates, { id: 'nota', name: 'NOTA', party: 'None of the Above', symbol: '❌' }].map((c, idx) => (
-                        <div key={c.id} className="flex items-center gap-2 bg-white p-2 border border-slate-300 rounded">
-                          <div className="w-8 font-mono text-center font-bold text-slate-500 border-r">{idx + 1}</div>
-                          <div className="flex-grow flex items-center justify-between px-2">
-                            <div>
-                              <div className="font-bold text-sm uppercase">{c.name}</div>
+                  <div className="bg-slate-200 p-4 rounded-xl border-4 border-slate-400 w-full md:w-1/2 shadow-xl relative">
+                    <div className="bg-slate-800 text-white text-center py-1 rounded mb-4 font-mono text-xs tracking-widest">BALLOT UNIT</div>
+                    <div className="space-y-1">
+                      {[...mockCandidates, { id: 'nota', name: 'NOTA', symbol: '❌', party: 'None of the Above' }].map((c, idx) => {
+                        const isSelected = selectedCandidate === c.id;
+                        return (
+                          <div key={c.id} className="flex items-center gap-2 bg-white p-2 border border-slate-300 rounded shadow-sm">
+                            <div className="w-6 font-mono text-center font-bold text-slate-400 border-r">{idx + 1}</div>
+                            <div className="flex-grow px-2 flex justify-between items-center">
+                              <div>
+                                <div className="font-bold text-xs uppercase">{c.name}</div>
+                              </div>
+                              <div className="text-xl">{c.symbol}</div>
                             </div>
-                            <div className="text-2xl">{c.symbol}</div>
+                            {/* Light */}
+                            <div className={`w-3 h-3 rounded-full flex-shrink-0 ${isSelected ? 'bg-red-500 shadow-[0_0_8px_red]' : 'bg-red-900'}`}></div>
+                            {/* Button */}
+                            <button 
+                              onClick={() => handleVote(c.id)}
+                              disabled={selectedCandidate !== null}
+                              className={`w-10 h-6 rounded-full ml-1 shadow-inner flex-shrink-0 transition-transform active:scale-90 relative overflow-hidden
+                                ${selectedCandidate !== null ? 'bg-blue-300 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-500 hover:shadow-[0_0_10px_blue]'}`}
+                            >
+                              {isSelected && <span className="absolute inset-0 flex items-center justify-center text-[8px] text-white font-bold animate-ping">BEEP</span>}
+                            </button>
                           </div>
-                          {/* Ready Light */}
-                          <div className={`w-3 h-3 rounded-full ${selectedCandidate === c.id ? 'bg-red-500 shadow-[0_0_5px_red]' : 'bg-red-900'}`}></div>
-                          {/* Button */}
-                          <button 
-                            onClick={() => handleVote(c.id)}
-                            disabled={selectedCandidate !== null}
-                            className={`w-8 h-8 rounded-full ml-2 shadow-inner transition-transform active:scale-90 ${selectedCandidate !== null ? 'bg-blue-300 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-500'}`}
-                          ></button>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
 
                   {/* VVPAT Machine */}
-                  <div className="w-full max-w-xs relative">
-                    <div className="bg-slate-300 rounded-t-3xl border-4 border-slate-400 p-4 h-64 flex flex-col items-center justify-center relative z-10 shadow-lg">
+                  <div className="w-full md:w-1/3 relative flex flex-col">
+                    <div className="bg-slate-300 rounded-t-3xl border-4 border-slate-500 p-4 h-64 flex flex-col items-center justify-center relative shadow-xl">
                       <div className="bg-slate-800 text-white text-center px-4 py-1 rounded mb-4 font-mono text-xs absolute top-4">VVPAT</div>
                       
-                      {/* VVPAT Window */}
-                      <div className="w-48 h-32 bg-slate-900 rounded border-8 border-slate-700 relative overflow-hidden flex items-center justify-center">
-                        <div className="absolute inset-0 opacity-20 bg-[linear-gradient(transparent_50%,rgba(0,0,0,0.5)_50%)] bg-[length:100%_4px] pointer-events-none"></div>
+                      <div className="w-40 h-32 bg-slate-900 rounded border-8 border-slate-700 relative overflow-hidden flex items-center justify-center">
+                        <div className="absolute inset-0 bg-black/40 z-20 pointer-events-none shadow-[inset_0_0_20px_rgba(0,0,0,1)]"></div>
+                        
                         <AnimatePresence>
                           {showVvpat && selectedCandidate && (
                             <motion.div 
-                              initial={{ y: -100 }} animate={{ y: 0 }} exit={{ y: 100 }} transition={{ duration: 1 }}
-                              className="bg-white w-40 h-24 p-2 text-center border-b border-dashed border-slate-300 flex flex-col justify-center items-center shadow-lg"
+                              initial={{ y: -120 }} animate={{ y: 0 }} exit={{ y: 120, opacity: 0 }} transition={{ duration: 1 }}
+                              className="bg-green-50 w-32 h-24 p-2 text-center border border-dashed border-slate-400 flex flex-col justify-center items-center shadow-lg relative z-10"
                             >
-                              <div className="font-bold text-sm truncate w-full">
-                                {selectedCandidate === 'nota' ? 'NOTA' : candidates.find(c => c.id === selectedCandidate)?.name}
+                              <div className="font-bold text-xs truncate w-full border-b border-slate-300 pb-1 mb-1">
+                                {selectedCandidate === 'nota' ? 'NOTA' : mockCandidates.find(c => c.id === selectedCandidate)?.name}
                               </div>
-                              <div className="text-3xl mt-1">
-                                {selectedCandidate === 'nota' ? '❌' : candidates.find(c => c.id === selectedCandidate)?.symbol}
+                              <div className="text-3xl">
+                                {selectedCandidate === 'nota' ? '❌' : mockCandidates.find(c => c.id === selectedCandidate)?.symbol}
+                              </div>
+                              <div className="text-[10px] font-mono mt-1 text-slate-500">
+                                S.No: {selectedCandidate === 'nota' ? 6 : mockCandidates.findIndex(c => c.id === selectedCandidate) + 1}
                               </div>
                             </motion.div>
                           )}
                         </AnimatePresence>
                       </div>
-                      <p className="text-[10px] text-slate-500 mt-4 text-center">Slip is visible for 7 seconds and then drops into sealed box.</p>
                     </div>
-                    <div className="h-16 bg-slate-400 rounded-b-xl border-x-4 border-b-4 border-slate-500 w-full shadow-lg flex items-center justify-center">
-                       <div className="w-3/4 h-2 bg-slate-800 rounded-full"></div>
+                    <div className="h-16 bg-slate-400 rounded-b-xl border-x-4 border-b-4 border-slate-600 w-full shadow-lg flex items-center justify-center">
+                       <div className="w-3/4 h-2 bg-slate-800 rounded-full shadow-inner"></div>
                     </div>
                   </div>
+                </div>
+                <div className="text-center mt-6">
+                  <p className="text-sm text-slate-600 bg-blue-50 inline-block px-4 py-2 rounded-full border border-blue-100">
+                    Explain: Your vote is stored electronically <strong>AND</strong> verified by paper (VVPAT).
+                  </p>
                 </div>
               </motion.div>
             )}
 
-            {/* Step 5: Celebration */}
-            {step === 5 && (
-              <motion.div 
-                key="step5"
-                initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }}
-                className="w-full text-center py-12"
-              >
-                <div className="w-24 h-24 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <CheckCircle size={48} />
-                </div>
-                <h3 className="text-4xl font-bold text-slate-800 mb-4">You Voted! 🗳️</h3>
-                <p className="text-xl text-slate-600 mb-8 max-w-lg mx-auto">
-                  You successfully navigated the entire process. You've earned the <strong>"First-Time Voter"</strong> badge!
-                </p>
-                <button 
-                  onClick={() => { setStep(1); setVoterId(''); setSelectedCandidate(null); }}
-                  className="text-blue-600 font-semibold hover:underline"
+            {/* Step 6: Indelible Ink */}
+            {step === 6 && (
+              <motion.div key="s6" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="flex-grow flex flex-col items-center justify-center">
+                <StepHeader title="Indelible Ink" desc="The mark of a proud voter." />
+                
+                <div 
+                  className="w-64 h-64 bg-white rounded-full shadow-lg border-4 border-slate-100 flex flex-col items-center justify-center relative cursor-pointer group"
+                  onClick={() => setInkApplied(true)}
                 >
-                  Start Over
+                  {/* CSS Hand representation */}
+                  <div className="relative w-24 h-40 mt-10">
+                    <div className="absolute bottom-0 left-4 w-16 h-20 bg-[#fbcda1] rounded-b-xl"></div> {/* Palm */}
+                    <div className="absolute bottom-20 left-4 w-4 h-16 bg-[#fbcda1] rounded-t-full origin-bottom transform -rotate-12"></div> {/* Thumb */}
+                    <div className="absolute bottom-20 left-12 w-4 h-20 bg-[#fbcda1] rounded-t-full"> {/* Index Finger */}
+                      {inkApplied && (
+                        <motion.div 
+                          initial={{ height: 0 }} animate={{ height: '40%' }} transition={{ duration: 0.8, ease: "easeOut" }}
+                          className="absolute top-4 left-0 w-full bg-purple-900 rounded-sm mix-blend-multiply opacity-80"
+                        ></motion.div>
+                      )}
+                    </div> 
+                    <div className="absolute bottom-20 left-16 w-4 h-18 bg-[#fbcda1] rounded-t-full"></div> {/* Middle */}
+                    {!inkApplied && (
+                      <div className="absolute -top-10 left-12 w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-500 animate-bounce">
+                         Click!
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
+                <p className="mt-8 text-slate-600 font-medium max-w-md text-center">
+                  Explain: Ink lasts 2–3 weeks and prevents double voting. It is applied on the left index finger.
+                </p>
+                {inkApplied && (
+                   <motion.button initial={{ opacity: 0 }} animate={{ opacity: 1 }} onClick={nextStep} className="mt-6 bg-[#138808] text-white px-8 py-3 rounded-full font-bold shadow-md">
+                     Finish Simulation
+                   </motion.button>
+                )}
+              </motion.div>
+            )}
+
+            {/* Step 7: Celebration */}
+            {step === 7 && (
+              <motion.div key="s7" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="flex-grow flex flex-col items-center justify-center text-center py-4">
+                <h2 className="text-4xl md:text-5xl font-extrabold text-[#138808] mb-8">🗳️ Your vote has been cast!</h2>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-4xl mb-10">
+                  <div className="bg-white p-6 rounded-2xl shadow border-t-4 border-[#FF9933] transform hover:-translate-y-1 transition-transform">
+                    <div className="text-3xl mb-2">📊</div>
+                    <p className="text-sm text-slate-700 font-medium">In 2024 Lok Sabha, <strong>642 million</strong> people voted — a massive 65.79% turnout.</p>
+                  </div>
+                  <div className="bg-white p-6 rounded-2xl shadow border-t-4 border-white border-x border-b border-slate-200 transform hover:-translate-y-1 transition-transform">
+                    <div className="text-3xl mb-2">⚖️</div>
+                    <p className="text-sm text-slate-700 font-medium">The smallest winning margin in Indian electoral history was just <strong>1 vote</strong> (1957).</p>
+                  </div>
+                  <div className="bg-white p-6 rounded-2xl shadow border-t-4 border-[#138808] transform hover:-translate-y-1 transition-transform">
+                    <div className="text-3xl mb-2">🔒</div>
+                    <p className="text-sm text-slate-700 font-medium">Your vote is <strong>100% secret</strong> — no one can trace it back to you.</p>
+                  </div>
+                </div>
+
+                <button 
+                  onClick={() => { setStep(1); setVoterId(''); setSearchResult(false); setSelectedCandidate(null); setInkApplied(false); }}
+                  className="bg-slate-800 text-white px-8 py-3 rounded-full font-bold hover:bg-slate-700 transition-colors"
+                >
+                  Restart Simulation
                 </button>
               </motion.div>
             )}
 
           </AnimatePresence>
         </div>
+
+        {/* Navigation Buttons */}
+        {step < 7 && (
+          <div className="flex justify-between mt-8">
+            <button 
+              onClick={prevStep} disabled={step === 1}
+              className="flex items-center gap-2 px-6 py-3 rounded-full font-bold text-slate-600 bg-slate-200 hover:bg-slate-300 disabled:opacity-50 transition-colors"
+            >
+              <ChevronLeft size={20} /> Previous
+            </button>
+            <button 
+              onClick={nextStep} 
+              disabled={(step === 1 && !searchResult) || (step === 5 && !selectedCandidate) || (step === 6 && !inkApplied)}
+              className="flex items-center gap-2 px-8 py-3 rounded-full font-bold text-white bg-[#000080] hover:bg-blue-900 disabled:opacity-50 transition-colors shadow-lg"
+            >
+              Next <ChevronRight size={20} />
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );
