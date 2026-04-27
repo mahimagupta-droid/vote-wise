@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { candidates } from '../data/mockData';
 import { FileText, Briefcase, GraduationCap, Building, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 export const CandidateSection: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'compare' | 'quiz'>('compare');
@@ -69,28 +70,28 @@ export const CandidateSection: React.FC = () => {
   };
 
   return (
-    <section id="candidates" className="py-20 bg-slate-50">
+    <section id="candidates" className="py-20 bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold mb-4 text-slate-800">Know Your Candidates</h2>
-          <p className="text-xl text-slate-600 max-w-2xl mx-auto">Compare fictional candidates, analyze their profiles, and find who aligns with your values.</p>
-          <p className="mt-2 text-sm font-bold text-orange-500 uppercase tracking-widest bg-orange-100 inline-block px-3 py-1 rounded-full">
+          <h2 className="text-4xl font-bold mb-4 text-slate-800 dark:text-white">Know Your Candidates</h2>
+          <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">Compare fictional candidates, analyze their profiles, and find who aligns with your values.</p>
+          <p className="mt-2 text-sm font-bold text-orange-500 dark:text-orange-400 uppercase tracking-widest bg-orange-100 dark:bg-orange-900/30 inline-block px-3 py-1 rounded-full">
             Disclaimer: This is a fictional educational exercise only.
           </p>
         </div>
 
         {/* Tabs */}
         <div className="flex justify-center mb-12">
-          <div className="bg-slate-200 p-1 rounded-full flex gap-1 shadow-inner">
+          <div className="bg-slate-200 dark:bg-slate-800 p-1 rounded-full flex gap-1 shadow-inner">
             <button 
               onClick={() => setActiveTab('compare')}
-              className={`px-8 py-3 rounded-full font-bold transition-all ${activeTab === 'compare' ? 'bg-white shadow-md text-blue-700' : 'text-slate-600 hover:text-slate-800 hover:bg-slate-300'}`}
+              className={`px-8 py-3 rounded-full font-bold transition-all ${activeTab === 'compare' ? 'bg-white dark:bg-slate-900 shadow-md text-blue-700 dark:text-blue-400' : 'text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-700'}`}
             >
               Candidate Comparison
             </button>
             <button 
               onClick={() => setActiveTab('quiz')}
-              className={`px-8 py-3 rounded-full font-bold transition-all ${activeTab === 'quiz' ? 'bg-white shadow-md text-orange-600' : 'text-slate-600 hover:text-slate-800 hover:bg-slate-300'}`}
+              className={`px-8 py-3 rounded-full font-bold transition-all ${activeTab === 'quiz' ? 'bg-white dark:bg-slate-900 shadow-md text-orange-600 dark:text-orange-400' : 'text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-700'}`}
             >
               "What Matters to You?" Matcher
             </button>
@@ -100,22 +101,28 @@ export const CandidateSection: React.FC = () => {
         {/* Comparison View */}
         {activeTab === 'compare' && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            {candidates.map(c => (
-              <div key={c.id} className="bg-white rounded-3xl p-8 shadow-lg border border-slate-100 hover:shadow-xl transition-all relative overflow-hidden flex flex-col h-full">
+            {candidates.map((c, idx) => (
+              <motion.div 
+                key={c.id} 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.1 }}
+                className="bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-lg border border-slate-100 dark:border-slate-800 hover:shadow-xl transition-all relative overflow-hidden flex flex-col h-full"
+              >
                 <div className={`absolute top-0 left-0 w-full h-3 ${c.color}`}></div>
                 
                 <div className="flex items-start gap-4 mb-6">
-                  <div className={`w-16 h-16 rounded-full flex items-center justify-center text-3xl shadow-sm border border-slate-100 flex-shrink-0 ${c.color} bg-opacity-10`}>
+                  <div className={`w-16 h-16 rounded-full flex items-center justify-center text-3xl shadow-sm border border-slate-100 dark:border-slate-800 flex-shrink-0 ${c.color} bg-opacity-10 dark:bg-opacity-20`}>
                     {c.symbol}
                   </div>
                   <div className="flex-grow">
-                    <h3 className="text-2xl font-extrabold text-slate-800 flex items-center gap-2">
-                      {c.name} <span className="text-sm font-normal text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">{c.age} yrs</span>
+                    <h3 className="text-2xl font-extrabold text-slate-800 dark:text-white flex items-center gap-2">
+                      {c.name} <span className="text-sm font-normal text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">{c.age} yrs</span>
                     </h3>
-                    <p className={`font-bold text-sm uppercase tracking-wider mt-1 ${c.color.replace('bg-', 'text-')}`}>
+                    <p className={`font-bold text-sm uppercase tracking-wider mt-1 ${c.color.replace('bg-', 'text-')} ${c.color.includes('blue') ? 'dark:text-blue-400' : c.color.includes('orange') ? 'dark:text-orange-400' : c.color.includes('green') ? 'dark:text-green-400' : 'dark:text-indigo-400'}`}>
                       {c.party}
                     </p>
-                    <p className="text-slate-500 text-sm flex items-center gap-1 mt-1 font-medium">
+                    <p className="text-slate-500 dark:text-slate-400 text-sm flex items-center gap-1 mt-1 font-medium">
                       <Building size={14} /> {c.constituency}
                     </p>
                   </div>
@@ -124,47 +131,47 @@ export const CandidateSection: React.FC = () => {
                 <div className="space-y-6 flex-grow">
                   {/* Manifesto */}
                   <div>
-                    <h4 className="flex items-center gap-2 font-bold text-slate-700 border-b border-slate-100 pb-2 mb-3">
-                      <FileText size={18} className="text-slate-400" /> Top 3 Promises
+                    <h4 className="flex items-center gap-2 font-bold text-slate-700 dark:text-slate-300 border-b border-slate-100 dark:border-slate-800 pb-2 mb-3">
+                      <FileText size={18} className="text-slate-400 dark:text-slate-500" /> Top 3 Promises
                     </h4>
-                    <ul className="pl-6 text-slate-600 space-y-2 text-sm font-medium">
+                    <ul className="pl-6 text-slate-600 dark:text-slate-400 space-y-2 text-sm font-medium">
                       {c.manifesto.map((m, i) => (
-                        <li key={i} className="relative before:content-['•'] before:absolute before:-left-4 before:text-slate-300 before:text-lg">{m}</li>
+                        <li key={i} className="relative before:content-['•'] before:absolute before:-left-4 before:text-slate-300 dark:before:text-slate-600 before:text-lg">{m}</li>
                       ))}
                     </ul>
                   </div>
                   
                   {/* Stats Grid */}
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                      <h4 className="flex items-center gap-2 font-bold text-slate-500 text-xs uppercase mb-1">
+                    <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
+                      <h4 className="flex items-center gap-2 font-bold text-slate-500 dark:text-slate-400 text-xs uppercase mb-1">
                         <GraduationCap size={14} /> Education
                       </h4>
-                      <p className="font-semibold text-slate-800">{c.education}</p>
+                      <p className="font-semibold text-slate-800 dark:text-slate-200">{c.education}</p>
                     </div>
                     
-                    <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                      <h4 className="flex items-center gap-2 font-bold text-slate-500 text-xs uppercase mb-1">
+                    <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
+                      <h4 className="flex items-center gap-2 font-bold text-slate-500 dark:text-slate-400 text-xs uppercase mb-1">
                         <Briefcase size={14} /> Assets
                       </h4>
-                      <p className="font-semibold text-slate-800">{c.assets}</p>
+                      <p className="font-semibold text-slate-800 dark:text-slate-200">{c.assets}</p>
                     </div>
                   </div>
 
                   {/* Criminal Cases Badge */}
                   <div>
                     {c.criminalCases === 0 ? (
-                      <div className="flex items-center gap-2 text-green-700 bg-green-50 border border-green-200 px-4 py-3 rounded-xl font-bold text-sm">
+                      <div className="flex items-center gap-2 text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800/50 px-4 py-3 rounded-xl font-bold text-sm">
                         <CheckCircle2 size={18} /> Criminal Cases: None
                       </div>
                     ) : (
-                      <div className="flex items-center gap-2 text-red-700 bg-red-50 border border-red-200 px-4 py-3 rounded-xl font-bold text-sm">
+                      <div className="flex items-center gap-2 text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-900/50 px-4 py-3 rounded-xl font-bold text-sm">
                         <AlertTriangle size={18} /> Criminal Cases: {c.criminalCases}
                       </div>
                     )}
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         )}
@@ -173,16 +180,22 @@ export const CandidateSection: React.FC = () => {
         {activeTab === 'quiz' && (
           <div className="max-w-2xl mx-auto">
             {!matchResults ? (
-              <div className="bg-white rounded-3xl p-8 md:p-12 shadow-xl border border-slate-200 text-center relative overflow-hidden">
+              <motion.div 
+                key={quizStep}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="bg-white dark:bg-slate-900 rounded-3xl p-8 md:p-12 shadow-xl border border-slate-200 dark:border-slate-800 text-center relative overflow-hidden"
+              >
                 <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-orange-400 to-orange-600"></div>
-                <div className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Question {quizStep + 1} of {questions.length}</div>
-                <h3 className="text-3xl font-bold text-slate-800 mb-10">{questions[quizStep].title}</h3>
+                <div className="text-sm font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-4">Question {quizStep + 1} of {questions.length}</div>
+                <h3 className="text-3xl font-bold text-slate-800 dark:text-white mb-10">{questions[quizStep].title}</h3>
                 <div className="space-y-4">
                   {questions[quizStep].options.map((opt, i) => (
                     <button 
                       key={i}
                       onClick={() => handleAnswer(opt)}
-                      className="w-full text-left p-5 rounded-2xl border-2 border-slate-200 hover:border-orange-500 hover:bg-orange-50 font-bold text-slate-700 hover:text-orange-700 transition-all shadow-sm hover:shadow-md transform hover:-translate-y-1"
+                      className="w-full text-left p-5 rounded-2xl border-2 border-slate-200 dark:border-slate-700 hover:border-orange-500 dark:hover:border-orange-500 hover:bg-orange-50 dark:hover:bg-orange-900/20 font-bold text-slate-700 dark:text-slate-300 hover:text-orange-700 dark:hover:text-orange-400 transition-all shadow-sm hover:shadow-md transform hover:-translate-y-1"
                     >
                       {opt}
                     </button>
@@ -192,18 +205,28 @@ export const CandidateSection: React.FC = () => {
                 {/* Progress Dots */}
                 <div className="mt-10 flex gap-2 justify-center">
                   {questions.map((_, i) => (
-                    <div key={i} className={`w-3 h-3 rounded-full transition-colors duration-300 ${i === quizStep ? 'bg-orange-500 scale-125' : i < quizStep ? 'bg-orange-300' : 'bg-slate-200'}`}></div>
+                    <div key={i} className={`w-3 h-3 rounded-full transition-colors duration-300 ${i === quizStep ? 'bg-orange-500 scale-125' : i < quizStep ? 'bg-orange-300 dark:bg-orange-800' : 'bg-slate-200 dark:bg-slate-700'}`}></div>
                   ))}
                 </div>
-              </div>
+              </motion.div>
             ) : (
-              <div className="bg-white rounded-3xl p-8 md:p-12 shadow-2xl border border-slate-200 relative overflow-hidden">
-                <h3 className="text-3xl font-extrabold text-slate-800 mb-2 text-center">Your Candidate Match</h3>
-                <p className="text-slate-500 text-center mb-10 font-medium">Based on your policy preferences, here is how the candidates align with your values.</p>
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="bg-white dark:bg-slate-900 rounded-3xl p-8 md:p-12 shadow-2xl border border-slate-200 dark:border-slate-800 relative overflow-hidden"
+              >
+                <h3 className="text-3xl font-extrabold text-slate-800 dark:text-white mb-2 text-center">Your Candidate Match</h3>
+                <p className="text-slate-500 dark:text-slate-400 text-center mb-10 font-medium">Based on your policy preferences, here is how the candidates align with your values.</p>
                 
                 <div className="space-y-8">
                   {matchResults.map((result, idx) => (
-                    <div key={idx} className={`relative ${idx === 0 ? 'bg-orange-50 border border-orange-200 p-6 rounded-2xl shadow-sm' : 'px-4'}`}>
+                    <motion.div 
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: idx * 0.2 }}
+                      key={idx} 
+                      className={`relative ${idx === 0 ? 'bg-orange-50 dark:bg-orange-900/10 border border-orange-200 dark:border-orange-800/50 p-6 rounded-2xl shadow-sm' : 'px-4'}`}
+                    >
                       {idx === 0 && (
                          <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-orange-500 text-white text-xs font-bold uppercase px-3 py-1 rounded-full shadow-md">
                            Top Match
@@ -215,37 +238,39 @@ export const CandidateSection: React.FC = () => {
                             {result.candidate.symbol}
                           </div>
                           <div>
-                            <h4 className="font-bold text-slate-800 text-lg">{result.candidate.name}</h4>
-                            <p className={`text-xs font-bold uppercase tracking-wider ${result.candidate.color.replace('bg-', 'text-')}`}>
+                            <h4 className="font-bold text-slate-800 dark:text-white text-lg">{result.candidate.name}</h4>
+                            <p className={`text-xs font-bold uppercase tracking-wider ${result.candidate.color.replace('bg-', 'text-')} ${result.candidate.color.includes('blue') ? 'dark:text-blue-400' : result.candidate.color.includes('orange') ? 'dark:text-orange-400' : result.candidate.color.includes('green') ? 'dark:text-green-400' : 'dark:text-indigo-400'}`}>
                               {result.candidate.party}
                             </p>
                           </div>
                         </div>
-                        <div className={`font-black text-2xl ${idx === 0 ? 'text-orange-600' : 'text-slate-600'}`}>
+                        <div className={`font-black text-2xl ${idx === 0 ? 'text-orange-600 dark:text-orange-400' : 'text-slate-600 dark:text-slate-400'}`}>
                           {result.percentage}%
                         </div>
                       </div>
                       
                       {/* Percentage Bar */}
-                      <div className="w-full h-3 bg-slate-200 rounded-full overflow-hidden mt-3">
-                        <div 
-                          className={`h-full rounded-full transition-all duration-1000 ease-out ${idx === 0 ? 'bg-gradient-to-r from-orange-400 to-orange-600' : 'bg-slate-400'}`}
-                          style={{ width: `${result.percentage}%`, transitionDelay: `${idx * 200}ms` }}
-                        ></div>
+                      <div className="w-full h-3 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden mt-3">
+                        <motion.div 
+                          initial={{ width: 0 }}
+                          animate={{ width: `${result.percentage}%` }}
+                          transition={{ duration: 1, delay: idx * 0.2 + 0.5, ease: "easeOut" }}
+                          className={`h-full rounded-full ${idx === 0 ? 'bg-gradient-to-r from-orange-400 to-orange-600' : 'bg-slate-400 dark:bg-slate-500'}`}
+                        ></motion.div>
                       </div>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
 
                 <div className="mt-12 text-center">
                   <button 
                     onClick={() => { setMatchResults(null); setQuizStep(0); setPreferences({}); }}
-                    className="bg-slate-800 text-white px-10 py-4 rounded-full font-bold hover:bg-slate-700 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                    className="bg-slate-800 dark:bg-slate-700 text-white px-10 py-4 rounded-full font-bold hover:bg-slate-700 dark:hover:bg-slate-600 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1"
                   >
                     Retake Matcher
                   </button>
                 </div>
-              </div>
+              </motion.div>
             )}
           </div>
         )}

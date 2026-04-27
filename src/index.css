@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:is(.dark *));
+
 @theme {
   --color-primary: #1e3a8a; /* Deep blue */
   --color-secondary: #ea580c; /* Saffron/Orange */
@@ -11,7 +13,7 @@
 
 @layer base {
   body {
-    @apply bg-slate-50 text-slate-900 font-sans antialiased selection:bg-primary selection:text-white;
+    @apply bg-slate-50 text-slate-900 font-sans antialiased selection:bg-primary selection:text-white dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300;
   }
   
   h1, h2, h3, h4, h5, h6 {
@@ -22,6 +24,6 @@
 /* Custom Utilities */
 @layer utilities {
   .glass-card {
-    @apply bg-white/80 backdrop-blur-md border border-white/20 shadow-xl;
+    @apply bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border border-white/20 dark:border-slate-800 shadow-xl;
   }
 }

@@ -107,23 +107,23 @@ export const QuizGame: React.FC = () => {
   };
 
   return (
-    <section id="quiz" className="py-20 bg-slate-900 text-white relative overflow-hidden">
+    <section id="quiz" className="py-20 bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-white relative overflow-hidden transition-colors duration-300">
       <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-orange-400 to-transparent"></div>
       
       <div className="container mx-auto px-4 max-w-3xl relative z-10">
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold mb-4 text-[#FF9933]">Civic Quiz Game</h2>
-          <p className="text-xl text-slate-400">Test your knowledge. Answer fast for speed bonuses and build a streak!</p>
+          <h2 className="text-4xl font-bold mb-4 text-[#FF9933] dark:text-orange-500">Civic Quiz Game</h2>
+          <p className="text-xl text-slate-600 dark:text-slate-400">Test your knowledge. Answer fast for speed bonuses and build a streak!</p>
         </div>
 
-        <div className="bg-slate-800 rounded-3xl shadow-2xl border border-slate-700 min-h-[500px] flex flex-col relative overflow-hidden">
+        <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-700 min-h-[500px] flex flex-col relative overflow-hidden transition-colors duration-300">
           
           {/* Points Added Animation */}
           <AnimatePresence>
             {pointsAddedAnim !== null && (
               <motion.div 
                 initial={{ opacity: 0, y: 50, scale: 0.5 }} animate={{ opacity: 1, y: -50, scale: 1.5 }} exit={{ opacity: 0 }}
-                className="absolute top-1/2 left-1/2 transform -translate-x-1/2 text-4xl font-black text-green-400 z-50 pointer-events-none drop-shadow-lg"
+                className="absolute top-1/2 left-1/2 transform -translate-x-1/2 text-4xl font-black text-green-500 dark:text-green-400 z-50 pointer-events-none drop-shadow-lg"
               >
                 +{pointsAddedAnim}
               </motion.div>
@@ -133,13 +133,13 @@ export const QuizGame: React.FC = () => {
           {!isPlaying && !isFinished && (
             <div className="flex-grow flex flex-col items-center justify-center p-8 text-center">
               <Award size={80} className="text-[#FF9933] mb-6" />
-              <h3 className="text-3xl font-bold mb-4">Are you ready?</h3>
-              <p className="text-slate-400 mb-8 max-w-md">
+              <h3 className="text-3xl font-bold mb-4 dark:text-white">Are you ready?</h3>
+              <p className="text-slate-600 dark:text-slate-400 mb-8 max-w-md">
                 10 Questions. 30 seconds each. 100 points base score.<br/>
-                <span className="text-yellow-400 font-bold">+50</span> if answered in under 10s.<br/>
-                <span className="text-orange-400 font-bold">1.5x</span> points for a 3-streak!
+                <span className="text-yellow-600 dark:text-yellow-400 font-bold">+50</span> if answered in under 10s.<br/>
+                <span className="text-orange-600 dark:text-orange-400 font-bold">1.5x</span> points for a 3-streak!
               </p>
-              {highScore > 0 && <p className="mb-6 text-sm font-mono text-slate-500">High Score: {highScore}</p>}
+              {highScore > 0 && <p className="mb-6 text-sm font-mono text-slate-500 dark:text-slate-400">High Score: {highScore}</p>}
               <button 
                 onClick={startGame}
                 className="bg-[#FF9933] hover:bg-orange-600 text-white px-10 py-4 rounded-full font-bold text-xl transition-all flex items-center gap-3 shadow-lg hover:scale-105"
@@ -152,14 +152,14 @@ export const QuizGame: React.FC = () => {
           {isPlaying && !isFinished && (
             <div className="flex-grow flex flex-col p-6 md:p-10">
               {/* Header Info */}
-              <div className="flex justify-between items-center mb-6 border-b border-slate-700 pb-4">
-                <div className="flex items-center gap-2 bg-slate-700 px-3 py-1 rounded-full text-sm font-bold text-slate-300">
+              <div className="flex justify-between items-center mb-6 border-b border-slate-200 dark:border-slate-700 pb-4">
+                <div className="flex items-center gap-2 bg-slate-200 dark:bg-slate-700 px-3 py-1 rounded-full text-sm font-bold text-slate-700 dark:text-slate-300">
                   Q {currentQIndex + 1}/{quizQuestions.length}
                 </div>
                 
                 <div className="flex items-center gap-6">
                   {streak >= 3 && (
-                    <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="flex items-center gap-1 text-orange-400 font-bold text-sm bg-orange-400/20 px-2 py-1 rounded-md">
+                    <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="flex items-center gap-1 text-orange-600 dark:text-orange-400 font-bold text-sm bg-orange-100 dark:bg-orange-400/20 px-2 py-1 rounded-md">
                       <Zap size={14} fill="currentColor" /> {streak} Streak! (1.5x)
                     </motion.div>
                   )}
@@ -169,19 +169,19 @@ export const QuizGame: React.FC = () => {
                   {/* Timer Circular Indicator */}
                   <div className="relative w-10 h-10 flex items-center justify-center">
                     <svg className="absolute inset-0 w-full h-full transform -rotate-90">
-                      <circle cx="20" cy="20" r="16" fill="none" stroke="#334155" strokeWidth="4" />
+                      <circle cx="20" cy="20" r="16" fill="none" className="stroke-slate-200 dark:stroke-slate-700" strokeWidth="4" />
                       <circle cx="20" cy="20" r="16" fill="none" 
                         stroke={timeLeft <= 10 ? '#ef4444' : '#10b981'} strokeWidth="4" 
                         strokeDasharray={100} strokeDashoffset={100 - (timeLeft/30)*100} 
                         className="transition-all duration-1000 linear" />
                     </svg>
-                    <span className={`text-xs font-mono font-bold ${timeLeft <= 10 ? 'text-red-400 animate-pulse' : 'text-slate-200'}`}>{timeLeft}</span>
+                    <span className={`text-xs font-mono font-bold ${timeLeft <= 10 ? 'text-red-500 dark:text-red-400 animate-pulse' : 'text-slate-700 dark:text-slate-200'}`}>{timeLeft}</span>
                   </div>
                 </div>
               </div>
 
               {/* Question */}
-              <h3 className="text-xl md:text-2xl font-bold mb-8 leading-relaxed">
+              <h3 className="text-xl md:text-2xl font-bold mb-8 leading-relaxed dark:text-white">
                 {quizQuestions[currentQIndex].question}
               </h3>
 
@@ -191,7 +191,7 @@ export const QuizGame: React.FC = () => {
                   const isCorrectAnswer = idx === quizQuestions[currentQIndex].correctAnswer;
                   const isSelected = selectedAnswer === idx;
                   
-                  let frontClass = "bg-slate-700 border-slate-600 hover:bg-slate-600 hover:border-slate-500 text-white";
+                  let frontClass = "bg-slate-100 dark:bg-slate-700 border-slate-200 dark:border-slate-600 hover:bg-slate-200 dark:hover:bg-slate-600 hover:border-slate-300 dark:hover:border-slate-500 text-slate-800 dark:text-white";
                   let backClass = "";
                   let showBack = showExplanation && (isCorrectAnswer || isSelected);
 
@@ -201,7 +201,7 @@ export const QuizGame: React.FC = () => {
                     } else if (isSelected) {
                       backClass = "bg-red-600 border-red-500 text-white font-bold";
                     } else {
-                      frontClass = "bg-slate-800 border-slate-700 text-slate-500 opacity-50";
+                      frontClass = "bg-slate-200 dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-400 dark:text-slate-500 opacity-50";
                     }
                   }
                   
@@ -216,7 +216,7 @@ export const QuizGame: React.FC = () => {
                     >
                       {/* Front */}
                       <div className={`absolute inset-0 backface-hidden flex items-center p-4 rounded-xl border-2 transition-colors ${frontClass}`}>
-                        <div className="w-6 h-6 rounded bg-slate-800 flex items-center justify-center text-xs font-bold mr-4 flex-shrink-0">
+                        <div className="w-6 h-6 rounded bg-slate-300 dark:bg-slate-800 flex items-center justify-center text-xs font-bold mr-4 flex-shrink-0 text-slate-700 dark:text-slate-300">
                           {String.fromCharCode(65 + idx)}
                         </div>
                         <span className="font-medium">{opt}</span>
@@ -243,15 +243,15 @@ export const QuizGame: React.FC = () => {
                   <motion.div 
                     initial={{ opacity: 0, height: 0, marginTop: 0 }} 
                     animate={{ opacity: 1, height: 'auto', marginTop: 24 }}
-                    className="bg-slate-900 p-5 rounded-xl border border-slate-700 relative overflow-hidden"
+                    className="bg-slate-50 dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-700 relative overflow-hidden"
                   >
                     <div className={`absolute top-0 left-0 w-1 h-full ${selectedAnswer === quizQuestions[currentQIndex].correctAnswer ? 'bg-green-500' : 'bg-red-500'}`}></div>
-                    <p className="text-slate-300 text-sm md:text-base leading-relaxed pl-3 font-medium">
+                    <p className="text-slate-700 dark:text-slate-300 text-sm md:text-base leading-relaxed pl-3 font-medium">
                       {quizQuestions[currentQIndex].explanation}
                     </p>
                     <button 
                       onClick={nextQuestion}
-                      className="mt-4 w-full bg-slate-700 hover:bg-slate-600 text-white py-3 rounded-lg font-bold transition-colors flex items-center justify-center gap-2"
+                      className="mt-4 w-full bg-slate-800 hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600 text-white py-3 rounded-lg font-bold transition-colors flex items-center justify-center gap-2"
                     >
                       {currentQIndex < quizQuestions.length - 1 ? 'Next Question' : 'Finish Quiz'} <ChevronRightIcon />
                     </button>
@@ -265,15 +265,15 @@ export const QuizGame: React.FC = () => {
             <div className="flex-grow flex flex-col items-center justify-center p-8 text-center animate-fade-in">
               <div className="text-6xl font-black mb-4 flex items-baseline gap-2">
                 <span className={getGrade().color}>{getGrade().grade}</span>
-                <span className="text-2xl text-slate-500 font-normal">Grade</span>
+                <span className="text-2xl text-slate-500 dark:text-slate-500 font-normal">Grade</span>
               </div>
-              <h3 className="text-3xl font-bold mb-2">{getGrade().text}</h3>
-              <p className="text-slate-400 mb-8 font-mono text-xl">Final Score: <span className="text-white font-bold">{score}</span></p>
+              <h3 className="text-3xl font-bold mb-2 dark:text-white">{getGrade().text}</h3>
+              <p className="text-slate-500 dark:text-slate-400 mb-8 font-mono text-xl">Final Score: <span className="text-slate-800 dark:text-white font-bold">{score}</span></p>
               
               <div className="flex gap-4">
                 <button 
                   onClick={startGame}
-                  className="bg-[#000080] hover:bg-blue-900 text-white px-8 py-3 rounded-full font-bold transition-colors flex items-center gap-2"
+                  className="bg-[#000080] dark:bg-blue-600 hover:bg-blue-900 dark:hover:bg-blue-700 text-white px-8 py-3 rounded-full font-bold transition-colors flex items-center gap-2"
                 >
                   <RotateCcw size={18} /> Try Again
                 </button>
