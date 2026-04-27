@@ -173,27 +173,33 @@ export const quizQuestions = [
 export const myths = [
   {
     id: 1,
-    myth: "My one vote doesn't matter.",
-    truth: "Elections have been won or lost by a single vote. High turnout strengthens democracy and holds leaders accountable. Your vote is your voice.",
-    category: "Impact"
+    myth: "My one vote doesn't matter",
+    truth: "In 2019, 15 Indian constituencies were won by under 1000 votes. Every vote literally changes outcomes."
   },
   {
     id: 2,
-    myth: "EVMs can be easily hacked over the internet.",
-    truth: "EVMs are standalone machines with no internet or wireless connectivity. They are manufactured under strict security and randomly allocated to booths.",
-    category: "Security"
+    myth: "EVMs can be hacked",
+    truth: "EVMs are standalone machines with no WiFi, Bluetooth, or internet. They've never been connected to any network."
   },
   {
     id: 3,
-    myth: "I can't vote if I don't have a Voter ID card.",
-    truth: "If your name is on the electoral roll, you can vote using any of the 12 approved alternative photo identity documents, such as Aadhaar, PAN, Driving License, or Passport.",
-    category: "Access"
+    myth: "I need my Voter ID card to vote",
+    truth: "12 alternate documents are accepted including Aadhaar, Passport, and Driving Licence."
   },
   {
     id: 4,
-    myth: "Elections are completely unmonitored.",
-    truth: "The ECI appoints independent General, Police, and Expenditure Observers (usually senior IAS/IPS/IRS officers). There are also micro-observers and webcasting at polling stations.",
-    category: "Process"
+    myth: "Elections are rigged",
+    truth: "Each booth has IAS observers, micro-observers, CCTV, flying squads, and VVPAT paper audit trails."
+  },
+  {
+    id: 5,
+    myth: "I can't vote if I've moved cities",
+    truth: "You can re-register at your new address on voters.eci.gov.in or cast a postal ballot in some cases."
+  },
+  {
+    id: 6,
+    myth: "Rich candidates always win",
+    truth: "India has elected candidates with declared assets under ₹10,000. Money doesn't guarantee a win."
   }
 ];
 

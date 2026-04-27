@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { myths } from '../data/mockData';
 import { useUserStore } from '../store/useUserStore';
-import { HelpCircle, CheckCircle2 } from 'lucide-react';
+import { XCircle, CheckCircle2, Hand } from 'lucide-react';
 
 export const MythBusters: React.FC = () => {
   const [flippedCards, setFlippedCards] = useState<number[]>([]);
@@ -24,45 +24,52 @@ export const MythBusters: React.FC = () => {
     <section id="myths" className="py-20 bg-slate-50 relative">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold mb-4 text-orange-600">Myth vs. Reality</h2>
-          <p className="text-xl text-slate-600">Click the cards to reveal the truth behind common election misconceptions.</p>
+          <h2 className="text-4xl font-bold mb-4 text-slate-800">Myth Busters</h2>
+          <p className="text-xl text-slate-600 max-w-2xl mx-auto">Click the cards to reveal the truth behind common election misconceptions.</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto perspective-1000">
-          {myths.map((myth) => (
-            <motion.div
-              key={myth.id}
-              className="relative w-full h-80 cursor-pointer"
-              style={{ transformStyle: 'preserve-3d' }}
-              animate={{ rotateY: flippedCards.includes(myth.id) ? 180 : 0 }}
-              transition={{ duration: 0.6, type: "spring", stiffness: 260, damping: 20 }}
-              onClick={() => handleFlip(myth.id)}
-            >
-              {/* Front side (Myth) */}
-              <div 
-                className="absolute w-full h-full backface-hidden bg-white rounded-3xl p-8 shadow-lg border-2 border-slate-100 flex flex-col items-center justify-center text-center hover:border-orange-300 transition-colors"
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto perspective-1000">
+          {myths.map((myth) => {
+            const isFlipped = flippedCards.includes(myth.id);
+            
+            return (
+              <motion.div
+                key={myth.id}
+                className="relative w-full h-64 cursor-pointer group"
+                style={{ transformStyle: 'preserve-3d' }}
+                animate={{ rotateX: isFlipped ? 180 : 0 }}
+                transition={{ duration: 0.6, type: "spring", stiffness: 260, damping: 20 }}
+                onClick={() => handleFlip(myth.id)}
               >
-                <div className="bg-orange-100 text-orange-600 p-3 rounded-full mb-6">
-                  <HelpCircle size={32} />
+                {/* Front side (Myth) */}
+                <div 
+                  className="absolute inset-0 backface-hidden rounded-2xl p-8 shadow-md border-2 border-orange-200 flex flex-col items-center justify-center text-center transition-all group-hover:shadow-xl"
+                  style={{ backgroundColor: '#fff', backgroundImage: 'linear-gradient(to bottom right, #fff, #fff3e6)' }}
+                >
+                  <div className="text-[#FF9933] mb-4">
+                    <XCircle size={48} strokeWidth={1.5} />
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-800 mb-6 px-4 leading-snug">"{myth.myth}"</h3>
+                  
+                  <div className="absolute bottom-4 flex items-center gap-2 text-sm font-bold text-[#FF9933] animate-pulse">
+                    <Hand size={16} /> Click to reveal truth
+                  </div>
                 </div>
-                <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">{myth.category}</div>
-                <h3 className="text-xl font-bold text-slate-800">"{myth.myth}"</h3>
-                <p className="absolute bottom-6 text-sm font-semibold text-orange-500 animate-pulse">Click to Reveal</p>
-              </div>
 
-              {/* Back side (Reality) */}
-              <div 
-                className="absolute w-full h-full backface-hidden bg-gradient-to-br from-blue-600 to-blue-800 rounded-3xl p-8 shadow-xl text-white flex flex-col items-center justify-center text-center"
-                style={{ transform: 'rotateY(180deg)' }}
-              >
-                <div className="bg-white/20 p-2 rounded-full mb-4">
-                  <CheckCircle2 size={24} className="text-green-300" />
+                {/* Back side (Reality) */}
+                <div 
+                  className="absolute inset-0 backface-hidden rounded-2xl p-8 shadow-xl border-2 border-green-200 flex flex-col items-center justify-center text-center"
+                  style={{ transform: 'rotateX(180deg)', backgroundColor: '#f0fdf4', backgroundImage: 'linear-gradient(to bottom right, #f0fdf4, #dcfce7)' }}
+                >
+                  <div className="text-[#138808] mb-4">
+                    <CheckCircle2 size={48} strokeWidth={1.5} />
+                  </div>
+                  <h4 className="text-sm font-bold mb-2 text-[#138808] uppercase tracking-widest">The Truth</h4>
+                  <p className="text-base text-slate-700 font-medium leading-relaxed">{myth.truth}</p>
                 </div>
-                <h4 className="text-lg font-bold mb-4 text-blue-200 uppercase tracking-wide">The Truth</h4>
-                <p className="text-sm leading-relaxed">{myth.truth}</p>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </section>
