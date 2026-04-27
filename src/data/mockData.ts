@@ -206,47 +206,98 @@ export const myths = [
 export const candidates = [
   {
     id: 'c1',
-    name: 'Aarav Sharma',
-    party: 'Progressive Alliance',
-    symbol: '☀️',
-    constituency: 'Central City',
+    name: 'Priya Sharma',
+    age: 42,
+    party: 'National Progress Party',
+    color: 'bg-blue-500',
+    symbol: '📘',
+    constituency: 'Central Delhi',
+    education: 'Ph.D. Economics',
     manifesto: [
-      'Increase education budget by 20%',
-      'Build 5 new multi-specialty hospitals',
-      'Create 100,000 tech jobs'
+      'Free metro rides for women',
+      '500 new govt schools',
+      '₹5000/month farmer support'
     ],
-    record: 'Former Mayor, successfully completed metro phase 1.',
-    affidavit: 'Assets: ₹2.5 Cr. Criminal Cases: 0.',
-    stances: { economy: 'tech-focus', environment: 'moderate', infrastructure: 'high' }
+    assets: '₹45L',
+    criminalCases: 0,
+    scoringWeights: {
+      q1: { 'Economy': 10, 'Education': 10, 'Healthcare': 5, 'Infrastructure': 0 },
+      q2: { 'Education': 10, 'Jobs': 5, 'Both equally': 10 },
+      q3: { 'Raise for rich': 10, 'Current is fine': 5, 'Keep low': 0 },
+      q4: { 'Expand aggressively': 10, 'Maintain current': 5, 'Private is better': 0 },
+      q5: { 'Important but balance with growth': 10, 'Top priority': 5, 'Economy first': 0 }
+    }
   },
   {
     id: 'c2',
-    name: 'Priya Patel',
-    party: 'Green Future Party',
-    symbol: '🌳',
-    constituency: 'Central City',
+    name: 'Rahul Verma',
+    age: 56,
+    party: "People's Alliance",
+    color: 'bg-orange-500',
+    symbol: '🏗️',
+    constituency: 'Central Delhi',
+    education: 'B.Tech',
     manifesto: [
-      'Transition to 100% renewable energy',
-      'Free public transport for students',
-      'Ban single-use plastics'
+      '1 lakh jobs in manufacturing',
+      'Expressway expansion',
+      'Free electricity up to 300 units'
     ],
-    record: 'Environmental activist, planted 1M trees.',
-    affidavit: 'Assets: ₹80 L. Criminal Cases: 1 (Protest related).',
-    stances: { economy: 'sustainable', environment: 'high', infrastructure: 'moderate' }
+    assets: '₹2.1Cr',
+    criminalCases: 1,
+    scoringWeights: {
+      q1: { 'Economy': 10, 'Infrastructure': 10, 'Healthcare': 0, 'Education': 0 },
+      q2: { 'Jobs': 10, 'Education': 0, 'Both equally': 5 },
+      q3: { 'Keep low': 10, 'Current is fine': 5, 'Raise for rich': 0 },
+      q4: { 'Expand aggressively': 5, 'Maintain current': 5, 'Private is better': 10 },
+      q5: { 'Economy first': 10, 'Important but balance with growth': 5, 'Top priority': 0 }
+    }
   },
   {
     id: 'c3',
-    name: 'Vikram Singh',
-    party: 'Heritage Front',
-    symbol: '🦁',
-    constituency: 'Central City',
+    name: 'Anjali Singh',
+    age: 38,
+    party: 'Green Future Party',
+    color: 'bg-green-500',
+    symbol: '🌳',
+    constituency: 'Central Delhi',
+    education: 'M.Sc. Environmental Science',
     manifesto: [
-      'Tax cuts for small businesses',
-      'Strengthen local law enforcement',
-      'Heritage preservation fund'
+      'Plant 10 lakh trees by 2026',
+      'Ban single-use plastic',
+      'Solar panels on all govt buildings'
     ],
-    record: 'Two-term MLA, improved local business licensing.',
-    affidavit: 'Assets: ₹5 Cr. Criminal Cases: 0.',
-    stances: { economy: 'pro-business', environment: 'low', infrastructure: 'moderate' }
+    assets: '₹12L',
+    criminalCases: 0,
+    scoringWeights: {
+      q1: { 'Environment': 10, 'Economy': 0, 'Healthcare': 5, 'Infrastructure': 0 },
+      q2: { 'Education': 5, 'Jobs': 5, 'Both equally': 10 },
+      q3: { 'Raise for rich': 5, 'Current is fine': 10, 'Keep low': 0 },
+      q4: { 'Expand aggressively': 10, 'Maintain current': 5, 'Private is better': 0 },
+      q5: { 'Top priority': 10, 'Important but balance with growth': 5, 'Economy first': 0 }
+    }
+  },
+  {
+    id: 'c4',
+    name: 'Mohammad Iqbal',
+    age: 61,
+    party: 'Unity Front',
+    color: 'bg-purple-500',
+    symbol: '🏥',
+    constituency: 'Central Delhi',
+    education: 'MBBS',
+    manifesto: [
+      'New hospitals in every ward',
+      'Free medicines for seniors',
+      'CCTV in all public spaces'
+    ],
+    assets: '₹78L',
+    criminalCases: 0,
+    scoringWeights: {
+      q1: { 'Healthcare': 10, 'Economy': 0, 'Environment': 0, 'Infrastructure': 5 },
+      q2: { 'Education': 5, 'Jobs': 5, 'Both equally': 10 },
+      q3: { 'Raise for rich': 5, 'Current is fine': 10, 'Keep low': 0 },
+      q4: { 'Expand aggressively': 5, 'Maintain current': 10, 'Private is better': 0 },
+      q5: { 'Important but balance with growth': 10, 'Top priority': 5, 'Economy first': 0 }
+    }
   }
 ];
