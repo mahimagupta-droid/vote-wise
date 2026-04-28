@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { quizQuestions } from '../data/mockData';
 import { useUserStore } from '../store/useUserStore';
+import { useBadgeStore } from '../store/useBadgeStore';
 import { Award, Zap, Check, X, Play, RotateCcw } from 'lucide-react';
 
 export const QuizGame: React.FC = () => {
@@ -18,6 +19,7 @@ export const QuizGame: React.FC = () => {
   const [pointsAddedAnim, setPointsAddedAnim] = useState<number | null>(null);
   
   const { setQuizScore } = useUserStore();
+  const { unlockBadge } = useBadgeStore();
 
   useEffect(() => {
     const savedHighScore = localStorage.getItem('votewise_highscore');
@@ -94,6 +96,13 @@ export const QuizGame: React.FC = () => {
     if (score > highScore) {
       setHighScore(score);
       localStorage.setItem('votewise_highscore', score.toString());
+    }
+    
+    // Check Civics Scholar badge condition (score >= 80%)
+    const maxScore = quizQuestions.length * 100;
+    const percentage = (score / maxScore) * 100;
+    if (percentage >= 80) {
+      unlockBadge('civics_scholar');
     }
   };
 

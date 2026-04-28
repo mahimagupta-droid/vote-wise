@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import { useUserStore } from '../store/useUserStore';
+import { useBadgeStore } from '../store/useBadgeStore';
 import { Search, MapPin, CheckCircle, CreditCard, ChevronRight, ChevronLeft } from 'lucide-react';
 
 export const VotingSimulator: React.FC = () => {
@@ -14,6 +15,7 @@ export const VotingSimulator: React.FC = () => {
   const [inkApplied, setInkApplied] = useState(false);
   
   const { setHasVoted } = useUserStore();
+  const { unlockBadge } = useBadgeStore();
 
   const totalSteps = 7;
 
@@ -60,6 +62,7 @@ export const VotingSimulator: React.FC = () => {
       if (step + 1 === 7) {
         triggerConfetti();
         setHasVoted();
+        unlockBadge('first_time_voter');
       }
     }
   };

@@ -8,6 +8,7 @@ import { ECIChart } from './components/ECIChart';
 import { QuizGame } from './components/QuizGame';
 import { MythBusters } from './components/MythBusters';
 import { RightsPanel } from './components/RightsPanel';
+import { BadgeTray } from './components/BadgeTray';
 import { useUserStore } from './store/useUserStore';
 
 function App() {
@@ -47,6 +48,7 @@ function App() {
   return (
     <div className="min-h-screen flex flex-col font-sans transition-colors duration-300">
       <Navbar />
+      <BadgeTray />
       
       <main className="flex-grow">
         {/* Hero Section */}

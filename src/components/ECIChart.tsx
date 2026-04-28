@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Shield, Building, MapPin, Users, UserCheck, Check, HelpCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useBadgeStore } from '../store/useBadgeStore';
 
 const eciRoles = [
   {
@@ -103,6 +104,19 @@ const mccRules = {
 
 export const ECIChart: React.FC = () => {
   const [activeNode, setActiveNode] = useState<number | null>(null);
+  const [clickedNodes, setClickedNodes] = useState<Set<number>>(new Set());
+  const { unlockBadge } = useBadgeStore();
+
+  const handleNodeClick = (id: number) => {
+    setActiveNode(activeNode === id ? null : id);
+    const newSet = new Set(clickedNodes);
+    newSet.add(id);
+    setClickedNodes(newSet);
+    
+    if (newSet.size === eciRoles.length) {
+      unlockBadge('election_expert');
+    }
+  };
 
   return (
     <section id="eci" className="py-20 bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
@@ -127,7 +141,7 @@ export const ECIChart: React.FC = () => {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.1 }}
-                    onClick={() => setActiveNode(isActive ? null : role.id)}
+                    onClick={() => handleNodeClick(role.id)}
                     className={`relative z-10 w-full max-w-md p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 transform
                       ${isRoot ? 'bg-[#000080] dark:bg-blue-900 text-white border-[#000080] dark:border-blue-700 hover:scale-105 shadow-lg' : 
                         isActive ? 'bg-blue-50 dark:bg-blue-900/30 border-blue-500 shadow-md scale-105' : 

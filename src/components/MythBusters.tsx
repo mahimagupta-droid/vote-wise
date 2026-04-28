@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { myths } from '../data/mockData';
 import { useUserStore } from '../store/useUserStore';
+import { useBadgeStore } from '../store/useBadgeStore';
 import { XCircle, CheckCircle2, Hand } from 'lucide-react';
 
 export const MythBusters: React.FC = () => {
   const [flippedCards, setFlippedCards] = useState<number[]>([]);
   const { setReadMyths } = useUserStore();
+  const { unlockBadge } = useBadgeStore();
 
   const handleFlip = (id: number) => {
     if (!flippedCards.includes(id)) {
@@ -14,6 +16,7 @@ export const MythBusters: React.FC = () => {
       setFlippedCards(newFlipped);
       if (newFlipped.length === myths.length) {
         setReadMyths();
+        unlockBadge('myth_buster');
       }
     } else {
       setFlippedCards(flippedCards.filter(c => c !== id));

@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { candidates } from '../data/mockData';
 import { FileText, Briefcase, GraduationCap, Building, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useBadgeStore } from '../store/useBadgeStore';
 
 export const CandidateSection: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'compare' | 'quiz'>('compare');
   const [quizStep, setQuizStep] = useState(0);
   const [preferences, setPreferences] = useState<Record<string, string>>({});
   const [matchResults, setMatchResults] = useState<any[] | null>(null);
+  const { unlockBadge } = useBadgeStore();
 
   const questions = [
     {
@@ -67,6 +69,7 @@ export const CandidateSection: React.FC = () => {
     }).sort((a, b) => b.percentage - a.percentage);
 
     setMatchResults(results);
+    unlockBadge('issue_voter');
   };
 
   return (
