@@ -119,10 +119,10 @@ export const ECIChart: React.FC = () => {
   };
 
   return (
-    <section id="eci" className="py-20 bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
+    <section id="eci" className="reveal-section py-20 bg-slate-50 dark:bg-slate-950 transition-colors duration-300 overflow-x-hidden" role="region" aria-labelledby="eci-heading">
       <div className="container mx-auto px-4 max-w-6xl">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold mb-4 text-[#000080] dark:text-blue-400">Election Machinery</h2>
+          <h2 id="eci-heading" className="text-4xl font-bold mb-4 text-[#000080] dark:text-blue-400">Election Machinery</h2>
           <p className="text-xl text-slate-600 dark:text-slate-400">Discover the enormous organizational structure that makes Indian elections possible.</p>
         </div>
 
@@ -142,7 +142,20 @@ export const ECIChart: React.FC = () => {
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.1 }}
                     onClick={() => handleNodeClick(role.id)}
-                    className={`relative z-10 w-full max-w-md p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 transform
+                    onClickCapture={(e) => {
+                      const node = e.currentTarget;
+                      const circle = document.createElement("span");
+                      const diameter = Math.max(node.clientWidth, node.clientHeight);
+                      const radius = diameter / 2;
+                      circle.style.width = circle.style.height = `${diameter}px`;
+                      circle.style.left = `${e.clientX - node.getBoundingClientRect().left - radius}px`;
+                      circle.style.top = `${e.clientY - node.getBoundingClientRect().top - radius}px`;
+                      circle.classList.add("ripple");
+                      const existingRipple = node.getElementsByClassName("ripple")[0];
+                      if (existingRipple) existingRipple.remove();
+                      node.appendChild(circle);
+                    }}
+                    className={`relative z-10 w-full max-w-md p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 transform touch-target ripple-container overflow-hidden
                       ${isRoot ? 'bg-[#000080] dark:bg-blue-900 text-white border-[#000080] dark:border-blue-700 hover:scale-105 shadow-lg' : 
                         isActive ? 'bg-blue-50 dark:bg-blue-900/30 border-blue-500 shadow-md scale-105' : 
                         'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-md'}

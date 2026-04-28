@@ -1,8 +1,38 @@
 import React, { useState } from 'react';
 import { candidates } from '../data/mockData';
 import { FileText, Briefcase, GraduationCap, Building, AlertTriangle, CheckCircle2 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useBadgeStore } from '../store/useBadgeStore';
+
+const ManifestoBlock: React.FC<{ manifesto: string[] }> = ({ manifesto }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  
+  return (
+    <div>
+      <h4 
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center justify-between font-bold text-slate-700 dark:text-slate-300 border-b border-slate-100 dark:border-slate-800 pb-2 mb-3 cursor-pointer md:cursor-auto touch-target"
+      >
+        <span className="flex items-center gap-2"><FileText size={18} className="text-slate-400 dark:text-slate-500" /> Top 3 Promises</span>
+        <span className="md:hidden text-slate-400 transition-transform duration-300 text-xs" style={{ rotate: isOpen ? '180deg' : '0deg' }}>▼</span>
+      </h4>
+      <AnimatePresence initial={false}>
+        {(isOpen || window.innerWidth >= 768) && (
+          <motion.ul 
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="pl-6 text-slate-600 dark:text-slate-400 space-y-2 text-sm font-medium overflow-hidden md:!h-auto md:!opacity-100"
+          >
+            {manifesto.map((m, i) => (
+              <li key={i} className="relative before:content-['•'] before:absolute before:-left-4 before:text-slate-300 dark:before:text-slate-600 before:text-lg">{m}</li>
+            ))}
+          </motion.ul>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
 
 export const CandidateSection: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'compare' | 'quiz'>('compare');
@@ -73,10 +103,10 @@ export const CandidateSection: React.FC = () => {
   };
 
   return (
-    <section id="candidates" className="py-20 bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
+    <section id="candidates" className="reveal-section py-20 bg-slate-50 dark:bg-slate-950 transition-colors duration-300" role="region" aria-labelledby="candidates-heading">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold mb-4 text-slate-800 dark:text-white">Know Your Candidates</h2>
+          <h2 id="candidates-heading" className="text-4xl font-bold mb-4 text-slate-800 dark:text-white">Know Your Candidates</h2>
           <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">Compare fictional candidates, analyze their profiles, and find who aligns with your values.</p>
           <p className="mt-2 text-sm font-bold text-orange-500 dark:text-orange-400 uppercase tracking-widest bg-orange-100 dark:bg-orange-900/30 inline-block px-3 py-1 rounded-full">
             Disclaimer: This is a fictional educational exercise only.
@@ -133,16 +163,7 @@ export const CandidateSection: React.FC = () => {
                 
                 <div className="space-y-6 flex-grow">
                   {/* Manifesto */}
-                  <div>
-                    <h4 className="flex items-center gap-2 font-bold text-slate-700 dark:text-slate-300 border-b border-slate-100 dark:border-slate-800 pb-2 mb-3">
-                      <FileText size={18} className="text-slate-400 dark:text-slate-500" /> Top 3 Promises
-                    </h4>
-                    <ul className="pl-6 text-slate-600 dark:text-slate-400 space-y-2 text-sm font-medium">
-                      {c.manifesto.map((m, i) => (
-                        <li key={i} className="relative before:content-['•'] before:absolute before:-left-4 before:text-slate-300 dark:before:text-slate-600 before:text-lg">{m}</li>
-                      ))}
-                    </ul>
-                  </div>
+                  <ManifestoBlock manifesto={c.manifesto} />
                   
                   {/* Stats Grid */}
                   <div className="grid grid-cols-2 gap-4">
@@ -198,7 +219,20 @@ export const CandidateSection: React.FC = () => {
                     <button 
                       key={i}
                       onClick={() => handleAnswer(opt)}
-                      className="w-full text-left p-5 rounded-2xl border-2 border-slate-200 dark:border-slate-700 hover:border-orange-500 dark:hover:border-orange-500 hover:bg-orange-50 dark:hover:bg-orange-900/20 font-bold text-slate-700 dark:text-slate-300 hover:text-orange-700 dark:hover:text-orange-400 transition-all shadow-sm hover:shadow-md transform hover:-translate-y-1"
+                      className="w-full text-left p-5 rounded-2xl border-2 border-slate-200 dark:border-slate-700 hover:border-orange-500 dark:hover:border-orange-500 hover:bg-orange-50 dark:hover:bg-orange-900/20 font-bold text-slate-700 dark:text-slate-300 hover:text-orange-700 dark:hover:text-orange-400 transition-all shadow-sm hover:shadow-md transform hover:-translate-y-1 touch-target ripple-container"
+                      onClickCapture={(e) => {
+                        const button = e.currentTarget;
+                        const circle = document.createElement("span");
+                        const diameter = Math.max(button.clientWidth, button.clientHeight);
+                        const radius = diameter / 2;
+                        circle.style.width = circle.style.height = `${diameter}px`;
+                        circle.style.left = `${e.clientX - button.getBoundingClientRect().left - radius}px`;
+                        circle.style.top = `${e.clientY - button.getBoundingClientRect().top - radius}px`;
+                        circle.classList.add("ripple");
+                        const existingRipple = button.getElementsByClassName("ripple")[0];
+                        if (existingRipple) existingRipple.remove();
+                        button.appendChild(circle);
+                      }}
                     >
                       {opt}
                     </button>

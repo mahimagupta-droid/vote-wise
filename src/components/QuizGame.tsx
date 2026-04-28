@@ -116,16 +116,16 @@ export const QuizGame: React.FC = () => {
   };
 
   return (
-    <section id="quiz" className="py-20 bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-white relative overflow-hidden transition-colors duration-300">
+    <section id="quiz" className="reveal-section py-20 bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-white relative overflow-hidden transition-colors duration-300" role="region" aria-labelledby="quiz-heading">
       <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-orange-400 to-transparent"></div>
       
       <div className="container mx-auto px-4 max-w-3xl relative z-10">
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold mb-4 text-[#FF9933] dark:text-orange-500">Civic Quiz Game</h2>
+          <h2 id="quiz-heading" className="text-4xl font-bold mb-4 text-[#FF9933] dark:text-orange-500">Civic Quiz Game</h2>
           <p className="text-xl text-slate-600 dark:text-slate-400">Test your knowledge. Answer fast for speed bonuses and build a streak!</p>
         </div>
 
-        <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-700 min-h-[500px] flex flex-col relative overflow-hidden transition-colors duration-300">
+        <div className="quiz-card bg-white dark:bg-slate-800 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-700 min-h-[500px] flex flex-col relative overflow-hidden transition-colors duration-300">
           
           {/* Points Added Animation */}
           <AnimatePresence>
@@ -173,14 +173,14 @@ export const QuizGame: React.FC = () => {
                     </motion.div>
                   )}
                   <div className="flex items-center gap-2 font-bold text-[#FF9933] text-xl">
-                    {score}
+                    <AnimatedNumber value={score} />
                   </div>
                   {/* Timer Circular Indicator */}
                   <div className="relative w-10 h-10 flex items-center justify-center">
                     <svg className="absolute inset-0 w-full h-full transform -rotate-90">
                       <circle cx="20" cy="20" r="16" fill="none" className="stroke-slate-200 dark:stroke-slate-700" strokeWidth="4" />
                       <circle cx="20" cy="20" r="16" fill="none" 
-                        stroke={timeLeft <= 10 ? '#ef4444' : '#10b981'} strokeWidth="4" 
+                        stroke={timeLeft <= 10 ? '#ef4444' : timeLeft <= 20 ? '#f59e0b' : '#10b981'} strokeWidth="4" 
                         strokeDasharray={100} strokeDashoffset={100 - (timeLeft/30)*100} 
                         className="transition-all duration-1000 linear" />
                     </svg>
@@ -204,11 +204,14 @@ export const QuizGame: React.FC = () => {
                   let backClass = "";
                   let showBack = showExplanation && (isCorrectAnswer || isSelected);
 
+                  let shakeClass = "";
+                  
                   if (showExplanation) {
                     if (isCorrectAnswer) {
-                      backClass = "bg-green-600 border-green-500 text-white font-bold";
+                      backClass = "bg-green-600 border-green-500 text-white font-bold pulse-ring-active";
                     } else if (isSelected) {
                       backClass = "bg-red-600 border-red-500 text-white font-bold";
+                      shakeClass = "shake";
                     } else {
                       frontClass = "bg-slate-200 dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-400 dark:text-slate-500 opacity-50";
                     }
@@ -217,7 +220,7 @@ export const QuizGame: React.FC = () => {
                   return (
                     <motion.div 
                       key={idx}
-                      className="relative w-full cursor-pointer h-auto min-h-[60px]"
+                      className={`relative w-full cursor-pointer h-auto min-h-[60px] touch-target ${shakeClass}`}
                       style={{ transformStyle: 'preserve-3d' }}
                       animate={{ rotateX: showBack ? 180 : 0 }}
                       transition={{ duration: 0.4 }}
@@ -260,7 +263,7 @@ export const QuizGame: React.FC = () => {
                     </p>
                     <button 
                       onClick={nextQuestion}
-                      className="mt-4 w-full bg-slate-800 hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600 text-white py-3 rounded-lg font-bold transition-colors flex items-center justify-center gap-2"
+                      className="mt-4 w-full bg-slate-800 hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600 text-white py-3 rounded-lg font-bold transition-colors flex items-center justify-center gap-2 touch-target btn-shimmer"
                     >
                       {currentQIndex < quizQuestions.length - 1 ? 'Next Question' : 'Finish Quiz'} <ChevronRightIcon />
                     </button>
@@ -297,3 +300,31 @@ export const QuizGame: React.FC = () => {
 };
 
 const ChevronRightIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>;
+
+const AnimatedNumber = ({ value }: { value: number }) => {
+  const [displayValue, setDisplayValue] = useState(value);
+
+  useEffect(() => {
+    let start = displayValue;
+    const end = value;
+    if (start === end) return;
+    
+    const duration = 500;
+    const startTime = performance.now();
+    
+    const animate = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      
+      setDisplayValue(Math.floor(start + (end - start) * progress));
+      
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      }
+    };
+    
+    requestAnimationFrame(animate);
+  }, [value]);
+
+  return <span>{displayValue}</span>;
+};

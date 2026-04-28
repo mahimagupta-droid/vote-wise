@@ -24,29 +24,29 @@ export const MythBusters: React.FC = () => {
   };
 
   return (
-    <section id="myths" className="py-20 bg-slate-50 dark:bg-slate-900 transition-colors duration-300 relative">
+    <section id="myths" className="reveal-section py-20 bg-slate-50 dark:bg-slate-900 transition-colors duration-300 relative" role="region" aria-labelledby="myths-heading">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold mb-4 text-slate-800 dark:text-white">Myth Busters</h2>
+          <h2 id="myths-heading" className="text-4xl font-bold mb-4 text-slate-800 dark:text-white">Myth Busters</h2>
           <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">Click the cards to reveal the truth behind common election misconceptions.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto perspective-1000">
-          {myths.map((myth) => {
+          {myths.map((myth, index) => {
             const isFlipped = flippedCards.includes(myth.id);
             
             return (
               <motion.div
                 key={myth.id}
-                className="relative w-full h-64 cursor-pointer group"
-                style={{ transformStyle: 'preserve-3d' }}
+                className="myth-card relative w-full h-64 cursor-pointer group"
+                style={{ transformStyle: 'preserve-3d', transitionDelay: `${index * 100}ms` }}
                 animate={{ rotateX: isFlipped ? 180 : 0 }}
                 transition={{ duration: 0.6, type: "spring", stiffness: 260, damping: 20 }}
                 onClick={() => handleFlip(myth.id)}
               >
                 {/* Front side (Myth) */}
                 <div 
-                  className="absolute inset-0 backface-hidden rounded-2xl p-8 shadow-md border-2 border-orange-200 dark:border-orange-900/50 flex flex-col items-center justify-center text-center transition-all group-hover:shadow-xl bg-gradient-to-br from-white to-orange-50 dark:from-slate-800 dark:to-orange-900/20"
+                  className="absolute inset-0 backface-hidden rounded-2xl p-8 shadow-md border-2 border-orange-200 dark:border-orange-900/50 flex flex-col items-center justify-center text-center transition-transform duration-300 group-hover:shadow-xl group-hover:rotate-1 group-hover:scale-[1.02] bg-gradient-to-br from-white to-orange-50 dark:from-slate-800 dark:to-orange-900/20"
                 >
                   <div className="text-[#FF9933] dark:text-orange-500 mb-4">
                     <XCircle size={48} strokeWidth={1.5} />

@@ -91,10 +91,10 @@ export const VotingSimulator: React.FC = () => {
   );
 
   return (
-    <section id="simulator" className="py-20 bg-white dark:bg-slate-900 transition-colors duration-300">
+    <section id="simulator" className="reveal-section py-20 bg-white dark:bg-slate-900 transition-colors duration-300" role="region" aria-labelledby="simulator-heading">
       <div className="container mx-auto px-4 max-w-4xl">
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold mb-4 text-[#000080] dark:text-blue-400">How to Vote Simulator</h2>
+          <h2 id="simulator-heading" className="text-4xl font-bold mb-4 text-[#000080] dark:text-blue-400">How to Vote Simulator</h2>
           <p className="text-xl text-slate-600 dark:text-slate-400">Walk through the exact 7-step process you'll experience on polling day.</p>
         </div>
 
@@ -113,7 +113,7 @@ export const VotingSimulator: React.FC = () => {
               <div 
                 key={i} 
                 onClick={() => i + 1 < step && setStep(i + 1)}
-                className={`w-4 h-4 rounded-full z-10 transition-colors cursor-pointer ${
+                className={`w-3 h-3 md:w-4 md:h-4 rounded-full z-10 transition-colors cursor-pointer ${
                   step > i ? 'bg-[#138808] dark:bg-green-500 shadow-[0_0_10px_rgba(19,136,8,0.5)]' : 
                   step === i + 1 ? 'bg-[#FF9933] scale-125 shadow-[0_0_10px_rgba(255,153,51,0.5)]' : 'bg-slate-300 dark:bg-slate-700'
                 }`}
@@ -123,7 +123,7 @@ export const VotingSimulator: React.FC = () => {
         </div>
 
         {/* Simulator Content */}
-        <div className="glass-card rounded-3xl p-6 md:p-10 min-h-[500px] flex flex-col relative overflow-hidden bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 transition-colors duration-300">
+        <div className="glass-card simulator-content rounded-3xl p-6 md:p-10 min-h-[500px] flex flex-col relative overflow-hidden bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 transition-colors duration-300">
           <AnimatePresence mode="wait">
             
             {/* Step 1: Check Electoral Roll */}
@@ -274,7 +274,7 @@ export const VotingSimulator: React.FC = () => {
               <motion.div key="s5" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="w-full">
                 <StepHeader title="Cast Your Vote" desc="Press the blue button next to your candidate on the EVM." />
 
-                <div className="flex flex-col md:flex-row gap-8 justify-center items-center max-w-3xl mx-auto">
+                <div className="flex flex-col md:flex-row gap-8 justify-center items-center max-w-3xl mx-auto transform scale-90 md:scale-100 origin-top">
                   {/* EVM Ballot Unit */}
                   <div className="bg-slate-200 dark:bg-slate-700 p-4 rounded-xl border-4 border-slate-400 dark:border-slate-600 w-full md:w-1/2 shadow-xl relative transition-colors">
                     <div className="bg-slate-800 dark:bg-slate-900 text-white text-center py-1 rounded mb-4 font-mono text-xs tracking-widest">BALLOT UNIT</div>
@@ -294,9 +294,22 @@ export const VotingSimulator: React.FC = () => {
                             <div className={`w-3 h-3 rounded-full flex-shrink-0 ${isSelected ? 'bg-red-500 shadow-[0_0_8px_red]' : 'bg-red-900'}`}></div>
                             {/* Button */}
                             <button 
-                              onClick={() => handleVote(c.id)}
+                              onClick={(e) => {
+                                const button = e.currentTarget;
+                                const circle = document.createElement("span");
+                                const diameter = Math.max(button.clientWidth, button.clientHeight);
+                                const radius = diameter / 2;
+                                circle.style.width = circle.style.height = `${diameter}px`;
+                                circle.style.left = `${e.clientX - button.getBoundingClientRect().left - radius}px`;
+                                circle.style.top = `${e.clientY - button.getBoundingClientRect().top - radius}px`;
+                                circle.classList.add("ripple");
+                                const existingRipple = button.getElementsByClassName("ripple")[0];
+                                if (existingRipple) existingRipple.remove();
+                                button.appendChild(circle);
+                                handleVote(c.id);
+                              }}
                               disabled={selectedCandidate !== null}
-                              className={`w-10 h-6 rounded-full ml-1 shadow-inner flex-shrink-0 transition-transform active:scale-90 relative overflow-hidden
+                              className={`w-10 h-6 rounded-full ml-1 shadow-inner flex-shrink-0 transition-transform active:scale-90 relative overflow-hidden touch-target
                                 ${selectedCandidate !== null ? 'bg-blue-300 dark:bg-blue-900 cursor-not-allowed' : 'bg-blue-600 dark:bg-blue-500 hover:bg-blue-500 hover:shadow-[0_0_10px_blue]'}`}
                             >
                               {isSelected && <span className="absolute inset-0 flex items-center justify-center text-[8px] text-white font-bold animate-ping">BEEP</span>}
@@ -318,8 +331,12 @@ export const VotingSimulator: React.FC = () => {
                         <AnimatePresence>
                           {showVvpat && selectedCandidate && (
                             <motion.div 
-                              initial={{ y: -120 }} animate={{ y: 0 }} exit={{ y: 120, opacity: 0 }} transition={{ duration: 1 }}
-                              className="bg-green-50 dark:bg-green-100 w-32 h-24 p-2 text-center border border-dashed border-slate-400 flex flex-col justify-center items-center shadow-lg relative z-10 text-slate-800"
+                              initial={{ y: -120, opacity: 1 }} 
+                              animate={{ y: 0, opacity: 1 }} 
+                              exit={{ y: 120, opacity: 0 }} 
+                              transition={{ y: { duration: 1, ease: "easeOut" }, opacity: { duration: 1, delay: 5.5 } }}
+                              className="bg-[#fefefe] w-32 h-24 p-2 text-center border-l-2 border-r-2 border-b-2 border-slate-300 border-dashed flex flex-col justify-center items-center relative z-10 text-slate-800"
+                              style={{ boxShadow: 'inset 0 0 10px rgba(0,0,0,0.05), 0 5px 10px rgba(0,0,0,0.1)' }}
                             >
                               <div className="font-bold text-xs truncate w-full border-b border-slate-300 pb-1 mb-1">
                                 {selectedCandidate === 'nota' ? 'NOTA' : mockCandidates.find(c => c.id === selectedCandidate)?.name}
@@ -423,17 +440,17 @@ export const VotingSimulator: React.FC = () => {
 
         {/* Navigation Buttons */}
         {step < 7 && (
-          <div className="flex justify-between mt-8">
+          <div className="flex flex-col md:flex-row justify-between mt-8 gap-4">
             <button 
               onClick={prevStep} disabled={step === 1}
-              className="flex items-center gap-2 px-6 py-3 rounded-full font-bold text-slate-600 dark:text-slate-300 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 disabled:opacity-50 transition-colors"
+              className="flex items-center justify-center gap-2 w-full md:w-auto px-6 py-3 rounded-full font-bold text-slate-600 dark:text-slate-300 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 disabled:opacity-50 transition-colors"
             >
               <ChevronLeft size={20} /> Previous
             </button>
             <button 
               onClick={nextStep} 
               disabled={(step === 1 && !searchResult) || (step === 5 && !selectedCandidate) || (step === 6 && !inkApplied)}
-              className="flex items-center gap-2 px-8 py-3 rounded-full font-bold text-white bg-[#000080] dark:bg-blue-600 hover:bg-blue-900 dark:hover:bg-blue-500 disabled:opacity-50 transition-colors shadow-lg"
+              className="flex items-center justify-center gap-2 w-full md:w-auto px-8 py-3 rounded-full font-bold text-white bg-[#000080] dark:bg-blue-600 hover:bg-blue-900 dark:hover:bg-blue-500 disabled:opacity-50 transition-colors shadow-lg"
             >
               Next <ChevronRight size={20} />
             </button>

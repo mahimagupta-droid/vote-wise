@@ -1,10 +1,31 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useUserStore } from '../store/useUserStore';
-import { Sun, Moon } from 'lucide-react';
+import { Sun, Moon, Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export const Navbar: React.FC = () => {
-  const { badges, toggleDarkMode, state } = useUserStore();
+  const { toggleDarkMode, state } = useUserStore();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('');
+
+  const navLinks = ['timeline', 'simulator', 'candidates', 'eci', 'myths', 'rights', 'quiz'];
+
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          setActiveSection(entry.target.id);
+        }
+      });
+    }, { threshold: 0.4 });
+
+    navLinks.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <motion.header 
@@ -18,14 +39,14 @@ export const Navbar: React.FC = () => {
           <span className="text-secondary">Vote</span>Wise
         </h1>
         <nav className="hidden md:flex gap-6 font-medium text-sm items-center">
-          {['timeline', 'simulator', 'candidates', 'eci', 'quiz', 'myths'].map((item, i) => (
+          {navLinks.map((item, i) => (
             <motion.a 
               key={item}
               href={`#${item}`} 
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 * i, type: "spring" }}
-              className="hover:text-secondary transition-colors capitalize"
+              className={`hover:text-secondary transition-colors capitalize nav-link-underline ${activeSection === item ? 'active text-secondary' : ''}`}
             >
               {item === 'timeline' ? 'Journey' : item === 'eci' ? 'ECI' : item}
             </motion.a>
@@ -34,7 +55,7 @@ export const Navbar: React.FC = () => {
           <div className="flex items-center gap-4 ml-4 border-l border-slate-700 pl-4">
             <button 
               onClick={toggleDarkMode}
-              className="p-2 rounded-full bg-slate-800 hover:bg-slate-700 text-yellow-400 transition-colors overflow-hidden relative w-9 h-9 flex items-center justify-center"
+              className="p-2 rounded-full bg-slate-800 hover:bg-slate-700 text-yellow-400 transition-colors overflow-hidden relative w-9 h-9 flex items-center justify-center touch-target"
               aria-label="Toggle dark mode"
             >
               <AnimatePresence mode="wait">
@@ -49,26 +70,72 @@ export const Navbar: React.FC = () => {
                 )}
               </AnimatePresence>
             </button>
-            <div className="flex gap-2">
-              <Badge title="First-Time Voter" earned={badges.voter} icon="🗳️" />
-              <Badge title="Civics Scholar" earned={badges.scholar} icon="📚" />
-              <Badge title="Myth Buster" earned={badges.mythbuster} icon="🔍" />
-              <Badge title="Democracy Champion" earned={badges.champion} icon="⚖️" />
-            </div>
           </div>
         </nav>
+
+        {/* Mobile menu button */}
+        <div className="md:hidden flex items-center gap-4">
+          <button 
+            onClick={toggleDarkMode}
+            className="p-2 rounded-full bg-slate-800 hover:bg-slate-700 text-yellow-400 transition-colors overflow-hidden relative w-9 h-9 flex items-center justify-center touch-target"
+            aria-label="Toggle dark mode"
+          >
+            <AnimatePresence mode="wait">
+              {state.isDarkMode ? (
+                <motion.div key="sun" initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 20, opacity: 0 }} transition={{ duration: 0.2 }}>
+                  <Sun size={18} />
+                </motion.div>
+              ) : (
+                <motion.div key="moon" initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 20, opacity: 0 }} transition={{ duration: 0.2 }}>
+                  <Moon size={18} />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </button>
+          <button 
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="text-white hover:text-secondary transition-colors touch-target"
+            aria-label="Toggle menu"
+          >
+            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
       </div>
+
+      {/* Mobile drawer */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 top-[72px] bg-black/50 z-40 md:hidden"
+              onClick={() => setIsMobileMenuOpen(false)}
+            />
+            <motion.div 
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="absolute top-full left-0 right-0 bg-slate-900 border-b border-slate-800 overflow-hidden md:hidden z-50 shadow-xl"
+            >
+              <nav className="flex flex-col py-4">
+                {navLinks.map((item) => (
+                  <a
+                    key={item}
+                    href={`#${item}`}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={`px-6 py-3 font-medium capitalize border-l-4 transition-colors touch-target ${activeSection === item ? 'border-secondary text-secondary bg-slate-800/50' : 'border-transparent text-slate-300 hover:bg-slate-800 hover:text-white'}`}
+                  >
+                    {item === 'timeline' ? 'Journey' : item === 'eci' ? 'ECI' : item}
+                  </a>
+                ))}
+              </nav>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </motion.header>
   );
 };
 
-const Badge: React.FC<{ title: string; earned: boolean; icon: string }> = ({ title, earned, icon }) => (
-  <motion.div 
-    animate={earned ? { scale: [1, 1.2, 1], rotate: [0, 10, -10, 0] } : {}}
-    transition={{ duration: 0.5 }}
-    className={`w-8 h-8 rounded-full flex items-center justify-center text-lg ${earned ? 'bg-secondary ring-2 ring-secondary/50 shadow-[0_0_10px_rgba(234,88,12,0.8)]' : 'bg-slate-800 opacity-40 grayscale'} transition-colors duration-500`}
-    title={title}
-  >
-    {icon}
-  </motion.div>
-);

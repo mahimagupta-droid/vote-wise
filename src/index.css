@@ -14,10 +14,27 @@
 @layer base {
   body {
     @apply bg-slate-50 text-slate-900 font-sans antialiased selection:bg-primary selection:text-white dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300;
+    overflow-x: hidden;
+  }
+  
+  html {
+    scroll-behavior: smooth;
   }
   
   h1, h2, h3, h4, h5, h6 {
     @apply font-heading tracking-tight;
+  }
+
+  button:not(:disabled) {
+    transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.2s, color 0.2s, border-color 0.2s;
+  }
+  
+  button:not(:disabled):hover {
+    transform: scale(1.02);
+  }
+  
+  button:not(:disabled):active {
+    transform: scale(0.97);
   }
 }
 
@@ -25,5 +42,195 @@
 @layer utilities {
   .glass-card {
     @apply bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border border-white/20 dark:border-slate-800 shadow-xl;
+  }
+}
+
+/* Section Reveal Animations */
+@media (prefers-reduced-motion: no-preference) {
+  section.reveal-section {
+    visibility: hidden;
+  }
+  section.reveal-section.seen {
+    visibility: visible;
+  }
+
+  /* Hero */
+  #hero.reveal-section:not(.seen) .hero-content {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  #hero.reveal-section.seen .hero-content {
+    opacity: 1;
+    transform: scale(1);
+    transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* Timeline */
+  #timeline.reveal-section:not(.seen) .timeline-card {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+  #timeline.reveal-section.seen .timeline-card {
+    opacity: 1;
+    transform: translateX(0);
+    transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1), transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* Simulator */
+  #simulator.reveal-section:not(.seen) .simulator-content {
+    opacity: 0;
+    clip-path: inset(100% 0 0 0);
+  }
+  #simulator.reveal-section.seen .simulator-content {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+    transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1), clip-path 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* Quiz */
+  #quiz.reveal-section:not(.seen) .quiz-card {
+    opacity: 0;
+    transform: perspective(1000px) rotateX(-90deg);
+  }
+  #quiz.reveal-section.seen .quiz-card {
+    opacity: 1;
+    transform: perspective(1000px) rotateX(0deg);
+    transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* Myths */
+  #myths.reveal-section:not(.seen) .myth-card {
+    opacity: 0;
+    transform: translate(-30px, 30px) scale(0.8);
+  }
+  #myths.reveal-section.seen .myth-card {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+    transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* Candidates */
+  #candidates.reveal-section:not(.seen) .candidate-card {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  #candidates.reveal-section.seen .candidate-card {
+    opacity: 1;
+    transform: translateX(0);
+    transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1), transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* ECI */
+  #eci.reveal-section:not(.seen) .eci-node {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  #eci.reveal-section.seen .eci-node {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1), transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* Rights */
+  #rights.reveal-section:not(.seen) .right-item {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  #rights.reveal-section.seen .right-item {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1), transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}
+
+/* Micro-interactions */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-8px); }
+  75% { transform: translateX(8px); }
+}
+.shake {
+  animation: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 15px rgba(16, 185, 129, 0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+.pulse-ring-active {
+  animation: pulse-ring 1s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.btn-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.btn-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(to right, transparent, rgba(255,255,255,0.3), transparent);
+  transform: skewX(-20deg);
+  transition: none;
+}
+.btn-shimmer:hover::after {
+  animation: shimmer 0.6s forwards;
+}
+@keyframes shimmer {
+  100% { left: 200%; }
+}
+
+.nav-link-underline {
+  position: relative;
+}
+.nav-link-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: currentColor;
+  transition: width 0.3s ease;
+}
+.nav-link-underline:hover::after,
+.nav-link-underline.active::after {
+  width: 100%;
+}
+
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  transform: scale(0);
+  animation: ripple-anim 0.5s linear;
+  background-color: rgba(255, 255, 255, 0.5);
+  pointer-events: none;
+}
+@keyframes ripple-anim {
+  to { transform: scale(4); opacity: 0; }
+}
+
+.back-to-top {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s, transform 0.3s;
+}
+.back-to-top.visible {
+  opacity: 1;
+  visibility: visible;
+}
+.back-to-top:hover .arrow-icon {
+  transform: translateY(-2px);
+}
+
+/* Touch targets */
+@media (max-width: 640px) {
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
   }
 }

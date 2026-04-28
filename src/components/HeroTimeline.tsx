@@ -7,7 +7,7 @@ export const HeroTimeline: React.FC = () => {
   const [activeStep, setActiveStep] = useState<string | null>(null);
 
   return (
-    <section id="timeline" className="py-20 bg-slate-50 dark:bg-slate-950 relative overflow-hidden transition-colors duration-300">
+    <section id="timeline" className="reveal-section py-20 bg-slate-50 dark:bg-slate-950 relative overflow-hidden transition-colors duration-300" role="region" aria-labelledby="timeline-heading">
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
         <div className="absolute -top-20 -left-20 w-64 h-64 bg-orange-200 dark:bg-orange-900/30 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
         <div className="absolute top-40 -right-20 w-72 h-72 bg-blue-200 dark:bg-blue-900/30 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
@@ -17,6 +17,7 @@ export const HeroTimeline: React.FC = () => {
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <motion.h2 
+            id="timeline-heading"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -39,26 +40,23 @@ export const HeroTimeline: React.FC = () => {
           {/* Desktop Line */}
           <div className="hidden md:block absolute top-24 left-0 w-full h-1 bg-slate-200 dark:bg-slate-800 z-0"></div>
           
-          <div className="flex flex-col md:flex-row gap-6 relative z-10 overflow-x-auto pb-8 snap-x pt-4 px-2 md:px-0">
+          <div className="flex flex-col md:flex-row gap-6 relative z-10 pt-4 px-2 md:px-0">
             {timelineSteps.map((step, index) => {
               const isActive = activeStep === step.id;
               
               return (
-                <motion.div 
+                <div 
                   key={step.id}
-                  className="w-full md:w-64 flex-shrink-0 snap-center flex flex-col md:block"
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true, margin: "-50px" }}
-                  transition={{ delay: index * 0.05, type: "spring" }}
+                  className="w-full md:w-64 flex-shrink-0 timeline-card flex flex-col md:block"
+                  style={{ transitionDelay: `${index * 100}ms` }}
                 >
                   {/* Mobile Line */}
                   {index > 0 && <div className="h-6 w-1 bg-slate-200 dark:bg-slate-800 mx-auto md:hidden"></div>}
                   
                   <div 
                     onClick={() => setActiveStep(isActive ? null : step.id)}
-                    className={`bg-white dark:bg-slate-900 p-6 rounded-2xl cursor-pointer transition-all duration-300 transform hover:-translate-y-2 hover:scale-[1.02] border-2 relative
-                      ${isActive ? `border-[${step.color.replace('bg-', '')}] shadow-[0_0_20px_rgba(0,0,0,0.15)] ring-4 ring-offset-2 ring-offset-white dark:ring-offset-slate-950 ring-blue-100 dark:ring-blue-900/50 scale-[1.02] z-20` : 'border-slate-100 dark:border-slate-800 shadow-lg hover:shadow-xl'}`}
+                    className={`bg-white dark:bg-slate-900 p-6 rounded-2xl cursor-pointer transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl border-2 relative
+                      ${isActive ? `border-[${step.color.replace('bg-', '')}] shadow-[0_0_20px_rgba(0,0,0,0.15)] ring-4 ring-offset-2 ring-offset-white dark:ring-offset-slate-950 ring-blue-100 dark:ring-blue-900/50 scale-[1.02] z-20` : 'border-slate-100 dark:border-slate-800 shadow-lg'}`}
                   >
                     <div className={`w-14 h-14 rounded-full ${step.color} text-white flex items-center justify-center font-bold text-xl mb-4 shadow-md mx-auto`}>
                       {index + 1}
@@ -92,7 +90,7 @@ export const HeroTimeline: React.FC = () => {
                       </motion.div>
                     )}
                   </AnimatePresence>
-                </motion.div>
+                </div>
               );
             })}
           </div>
